@@ -1,7 +1,7 @@
 // Add icon to URL bar
-function checkForValidUrl(tabId, changeInfo, tab) {
+function checkForValidUrl(dummyTabId, dummyChangeInfo, tab) {
 	chrome.pageAction.show(tab.id);
-};
+}
 
 // Listen for any changes to the URL of any tab
 chrome.tabs.onUpdated.addListener(checkForValidUrl);
@@ -18,60 +18,60 @@ function getItem(key) {
 	try {
 		value = window.localStorage.getItem(key);
 	}catch(e) {
-		value = "null";
+		value = 'null';
 	}
 	return value;
 }
 
+// Extract domain name (DN) from URL
+function url2dn(url) {
+	var tmpa = document.createElement('a');
+	tmpa.href = url;
+	return tmpa.host;
+}
+
 // get IP using webRequest
-var currentIPList	= {};
+var currentIPList = {};
 chrome.webRequest.onCompleted.addListener(
-  function(info) {
-	  currentIPList[ info.url ] = info.ip;
-	return;
-  },
-  {
-	urls: [],
-	types: []
-  },
-  []
+	function(info) {
+		currentIPList[url2dn(info.url)] = info.ip;
+		return;
+	},
+	{
+		urls: [],
+		types: []
+	},
+	[]
 );
 
 // Listeners
 chrome.extension.onMessage.addListener(
-	function(request, sender, sendResponse)
-	{
-		switch (request.name)
-		{
-			
-			case "setOptions":
-				// request from the content script to set the options.
-				//localStorage["websiteIP_status"] = websiteIP_status;
-				localStorage.setItem("websiteIP_status", request.status);
+	function(request, sender, sendResponse) {
+		switch(request.name) {
+		case 'setOptions':
+			// request from the content script to set the options.
+			//localStorage['websiteIPStatus'] = websiteIPStatus;
+			localStorage.setItem('websiteIPStatus', request.status);
 			break;
-			
-			case "getOptions":
-				// request from the content script to get the options.
-				sendResponse({
-					enableDisableIP : localStorage["websiteIP_status"]
-				});
+		case 'getOptions':
+			// request from the content script to get the options.
+			sendResponse({
+				enableDisableIP: localStorage.websiteIPStatus
+			});
 			break;
-		
-		case "getIP":
-			var currentURL = sender.tab.url;
-			if (currentIPList[currentURL] !== undefined) {
+		case 'getIP':
+			var currentDN = url2dn(sender.tab.url);
+			if(currentIPList[currentDN] !== undefined) {
 				sendResponse({
-					domainToIP: currentIPList[currentURL]
+					domainToIP: currentIPList[currentDN]
 				});
 			} else {
 				sendResponse({
 					domainToIP: null
 				});
 			}
-			
-		break;
-		
-			default:
+			break;
+		default:
 			sendResponse({});
 		}
 	}

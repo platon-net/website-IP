@@ -1,4 +1,3 @@
-
 #chrome_websiteIP {
 	position: fixed;
 	bottom: 0;
@@ -30,8 +29,5 @@
 
 /* hide if in print view */
 @media print {
-      #chrome_websiteIP {display:none;}
+	#chrome_websiteIP {display:none;}
 }
-
-
-
