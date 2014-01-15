@@ -18,7 +18,7 @@ chrome.extension.sendMessage({name: 'getIP'}, function(response) {
 			div.id = 'chrome_websiteIP';
 			div.className = 'chrome_websiteIP_' + setPosition;
 			div.innerHTML = finalIP;
-			document.body.appendChild(div);
+			document && document.body && document.body.appendChild(div);
 
 			div.addEventListener('mouseover', function() {
 				if(this.className.indexOf('chrome_websiteIP_right') !== -1) {
