@@ -1,26 +1,26 @@
 
 // Set position to left for these websites
-var noRight = [
+/*var noRight = [
 		'www.facebook.com',
 		'www.google.com'
 	],
 	noRightCheck = (',' + noRight.join(',') + ',').indexOf(',' + window.location.host + ','), //Check if on noRight array and set position accordingly
-	setPosition = noRightCheck >= 0 ? 'left' : 'right';
-
+	setPosition = noRightCheck >= 0 ? 'left' : 'right';*/
+var setPosition = 'right';
 
 chrome.extension.sendMessage({name: 'getIP'}, function(response) {
 	var finalIP = response.domainToIP;
 	chrome.extension.sendMessage({name: 'getOptions'}, function(response) {
 		var websiteIPStatus = response.enableDisableIP,
-			div;
+			websiteip;
 		if(websiteIPStatus === CONSTANTS.DISABLE || websiteIPStatus === undefined) {
-			div = document.createElement('div');
-			div.id = 'chrome_websiteIP';
-			div.className = 'chrome_websiteIP_' + setPosition;
-			div.innerHTML = finalIP;
-			document && document.body && document.body.appendChild(div);
+			websiteip = document.createElement('websiteip');
+			websiteip.id = 'chrome_websiteIP';
+			websiteip.className = 'chrome_websiteIP_' + setPosition;
+			websiteip.innerHTML = finalIP;
+			document && document.body && document.body.appendChild(websiteip);
 
-			div.addEventListener('mouseover', function() {
+			websiteip.addEventListener('mouseover', function() {
 				if(this.className.indexOf('chrome_websiteIP_right') !== -1) {
 					this.className = this.className.replace('chrome_websiteIP_right', 'chrome_websiteIP_left');
 				} else {
