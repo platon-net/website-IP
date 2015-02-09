@@ -22,6 +22,7 @@ websiteip#chrome_websiteIP {
 	min-height:11px;
 	max-height:11px;
 	width:auto;
+	box-sizing: content-box !important;
 }
 
 websiteip#chrome_websiteIP.chrome_websiteIP_right {
