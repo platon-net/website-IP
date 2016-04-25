@@ -1,27 +1,4 @@
-// Add icon to URL bar
-function checkForValidUrl(dummyTabId, dummyChangeInfo, tab) {
-	chrome.pageAction.show(tab.id);
-}
-
-// Listen for any changes to the URL of any tab
-chrome.tabs.onUpdated.addListener(checkForValidUrl);
-
-// Set the item in the localstorage
-function setItem(key, value) {
-	window.localStorage.removeItem(key);
-	window.localStorage.setItem(key, value);
-}
-
-// Get the item from local storage with the specified key
-function getItem(key) {
-	var value;
-	try {
-		value = window.localStorage.getItem(key);
-	}catch(e) {
-		value = 'null';
-	}
-	return value;
-}
+var chrome = window.chrome;
 
 // Extract domain name (DN) from URL
 function url2dn(url) {
@@ -34,8 +11,9 @@ function url2dn(url) {
 var currentIPList = {};
 chrome.webRequest.onCompleted.addListener(
 	function(info) {
+		// summary:
+		//		retieve IP
 		currentIPList[url2dn(info.url)] = info.ip;
-		return;
 	},
 	{
 		urls: [],
@@ -48,28 +26,29 @@ chrome.webRequest.onCompleted.addListener(
 chrome.extension.onMessage.addListener(
 	function(request, sender, sendResponse) {
 		switch(request.name) {
-		case 'setOptions':
+		case 'setEnabled':
 			// request from the content script to set the options.
-			//localStorage['websiteIPStatus'] = websiteIPStatus;
-			localStorage.setItem('websiteIPStatus', request.status);
+			localStorage.setItem('websiteIPEnabled', request.status ? 'true' : 'false');
 			break;
-		case 'getOptions':
+		case 'isEnabled':
 			// request from the content script to get the options.
-			sendResponse({
-				enableDisableIP: localStorage.websiteIPStatus
-			});
+			sendResponse(localStorage.getItem('websiteIPEnabled') === 'true' || localStorage.getItem('websiteIPEnabled') === null);
 			break;
 		case 'getIP':
-			var currentDN = url2dn(sender.tab.url);
-			if(currentIPList[currentDN] !== undefined) {
-				sendResponse({
-					domainToIP: currentIPList[currentDN]
-				});
-			} else {
-				sendResponse({
-					domainToIP: null
-				});
-			}
+			sendResponse({
+				ip: currentIPList[url2dn(sender.tab.url)] || null
+			});
+			break;
+		case 'copyIP':
+			chrome.tabs.getSelected(null, function(tab) {
+				var input = document.createElement('input');
+				document.body.appendChild(input);
+				input.value = currentIPList[url2dn(tab.url)] || chrome.i18n.getMessage('notFound');
+				input.focus();
+				input.select();
+				document.execCommand('Copy');
+				input.remove();
+			});
 			break;
 		default:
 			sendResponse({});
