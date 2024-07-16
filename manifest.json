@@ -4,6 +4,11 @@
 	"name": "__MSG_name__",
 	"description": "__MSG_description__",
 	"version": "1.2.0",
+	"browser_specific_settings": {
+		"gecko": {
+		  "id": "websiteip@platon.org"
+		}
+	},
 	"author": "Platon Technologies",
 
 	"icons": {
