@@ -1,12 +1,10 @@
 {
-	"manifest_version": 2,
+	"manifest_version": 3,
 
 	"name": "__MSG_name__",
 	"description": "__MSG_description__",
-	"version": "1.1.0",
-	"author": "Benjamin Santalucia",
-
-	"minimum_chrome_version": "18",
+	"version": "1.2.0",
+	"author": "Platon Technologies",
 
 	"icons": {
 		"16": "images/icon16.png",
@@ -18,19 +16,27 @@
 	"permissions": [
 		"tabs",
 		"webRequest",
-		"https://*/*",
-		"http://*/*"
+		"webRequestBlocking"
+	],
+	"host_permissions": [
+		"http://*/*",
+		"https://*/*"
 	],
 
 	"background": {
-		"scripts": [ "background.js" ]
+		"scripts": [ "background.js" ],
+		"type": "classic"
 	},
-	"browser_action": {
-		"default_icon": "images/icon48.png",
-		"default_popup": "popup.html"
+	"action": {
+		"default_icon": {
+			"48": "images/icon48.png",
+			"128": "images/icon128.png"
+		},
+		"default_popup": "popup.html",
+		"default_title": "__MSG_name__"
 	},
 
-	"homepage_url": "https://github.com/ben8p/WebsiteIP",
+	"homepage_url": "https://github.com/igorplaton/website-IP",
 
 	"content_scripts": [{
 		"all_frames": false,

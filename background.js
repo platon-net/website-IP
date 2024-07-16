@@ -1,5 +1,3 @@
-var chrome = window.chrome;
-
 // Extract domain name (DN) from URL
 function url2dn(url) {
 	var tmpa = document.createElement('a');
@@ -9,21 +7,18 @@ function url2dn(url) {
 
 // get IP using webRequest
 var currentIPList = {};
-chrome.webRequest.onCompleted.addListener(
+browser.webRequest.onCompleted.addListener(
 	function(info) {
 		// summary:
 		//		retieve IP
 		currentIPList[url2dn(info.url)] = info.ip;
-	},
-	{
-		urls: [],
-		types: []
-	},
-	[]
+	}, {
+		"urls": ["http://*/*", "https://*/*"]
+	}
 );
 
 // Listeners
-chrome.extension.onMessage.addListener(
+browser.runtime.onMessage.addListener(
 	function(request, sender, sendResponse) {
 		switch(request.name) {
 		case 'setEnabled':
@@ -40,10 +35,10 @@ chrome.extension.onMessage.addListener(
 			});
 			break;
 		case 'copyIP':
-			chrome.tabs.getSelected(null, function(tab) {
+			browser.tabs.getSelected(null, function(tab) {
 				var input = document.createElement('input');
 				document.body.appendChild(input);
-				input.value = currentIPList[url2dn(tab.url)] || chrome.i18n.getMessage('notFound');
+				input.value = currentIPList[url2dn(tab.url)] || browser.i18n.getMessage('notFound');
 				input.focus();
 				input.select();
 				document.execCommand('Copy');

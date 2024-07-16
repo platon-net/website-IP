@@ -1,0 +1,23 @@
+{
+	"name": {
+		"message": "Website IP"
+	},
+	"description": {
+		"message": "Jednoduchý skript, ktorý umiestni IP aktuálnej webovej stránky do pravého dolného rohu."
+	},
+	"enable": {
+		"message": "Povoliť"
+	},
+	"disable": {
+		"message": "Zakázať"
+	},
+	"info": {
+		"message": "Na zobrazenie zmeny je potrebné znovu načítať stránku"
+	},
+	"copyToClipboard": {
+		"message": "Skopírovať IP do schránky"
+	},
+	"notFound": {
+		"message": "Nie je možné nájsť IP adresu"
+	}
+}
