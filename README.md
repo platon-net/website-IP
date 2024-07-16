@@ -1,13 +1,8 @@
 WebsiteIP
 =========
-Chrome extension which simply adds the IP of the current website you are viewing to the bottom right.
+Browser extension which simply adds the IP of the current website you are viewing to the bottom right.
 
-Fork of https://github.com/tinybigideas/WebsiteIP
-
-CHROME WEB STORE
-================
-
-https://chrome.google.com/webstore/detail/website-ip/agbkjcoclkflcpkognkhjkllhimlpice
+Fork of [https://github.com/tinybigideas/WebsiteIP](https://github.com/ben8p/chrome-extension-website-IP)
 
 FEATURES
 ========
@@ -20,7 +15,7 @@ Moves left or right on mouse over, it won't get in your way
 
 IPv6 support
 
-No external server to return IP - your chrome does all the work locally
+No external server to return IP - your browser does all the work locally
 
 Clean, attractive and does the job.
 
