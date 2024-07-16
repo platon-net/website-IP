@@ -6,9 +6,9 @@ Fork of [https://github.com/tinybigideas/WebsiteIP](https://github.com/ben8p/chr
 
 Installation from file in Firefox
 =================================
-* In Firefox open on new tab "about:config" and type "xpinstall.signatures.required" where change to "false".
-* Download build/firefox/WebsiteIP.<latest>.xpi
-* In Firefox open plugins and install from file
+* In Firefox open on new tab "about:config" and type "xpinstall.signatures.required" where change to "false"
+* Download build/firefox/WebsiteIP.latest_version.xpi
+* In Firefox open plugins and install from downloaded XPI file
 
 FEATURES
 ========
