@@ -4,9 +4,9 @@ Browser extension which simply adds the IP of the current website you are viewin
 
 Fork of [https://github.com/tinybigideas/WebsiteIP](https://github.com/ben8p/chrome-extension-website-IP)
 
-Installation
-============
-* Install from file For Firefox open in new tab "about:config" and type "xpinstall.signatures.required" where change to "false".
+Installation from file in Firefox
+=================================
+* In Firefox open on new tab "about:config" and type "xpinstall.signatures.required" where change to "false".
 * Download build/firefox/WebsiteIP.<latest>.xpi
 * In Firefox open plugins and install from file
 
