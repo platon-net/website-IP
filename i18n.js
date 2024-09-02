@@ -12,6 +12,7 @@ var chrome = window.chrome,
 
 for(j = nodes.length - 1; j > 0; j--) {
 	node = nodes[j];
+	if (!node) continue;
 
 	innerHTML = node.innerHTML.toString();
 	newInnerHTML = innerHTML.replace(/__MSG_(\w+)__/g, matcher);

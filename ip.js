@@ -8,12 +8,18 @@ browser.runtime.sendMessage({name: 'isEnabled'}, function(isEnabled) {
 		//		grab the ip
 
 		console.log(response);
-		if(!response.ip || response.ip === '::') { return; }
+		if(!response || !response.ip || response.ip === '::') { return; }
 
 		var websiteip = document.createElement('websiteip');
 
 		websiteip.id = 'chrome_websiteIP';
 		websiteip.className = 'chrome_websiteIP_right';
+		var response_ip = response.ip;
+		if (response_ip == null
+			|| response_ip == undefined)
+		{
+			response_ip = 'N/A'
+		}
 		websiteip.innerHTML = response.ip;
 		if(document && document.body) {
 			document.body.appendChild(websiteip);

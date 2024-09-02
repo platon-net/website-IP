@@ -35,7 +35,10 @@ browser.runtime.onMessage.addListener(
 			});
 			break;
 		case 'copyIP':
+			/* deprecated by Firefox 2024-09-02 12:35:36 Igor
 			browser.tabs.getSelected(null, function(tab) {
+			*/
+			browser.tabs.query({active: true, currentWindow: true}, function(tabs) {
 				var input = document.createElement('input');
 				document.body.appendChild(input);
 				input.value = currentIPList[url2dn(tab.url)] || browser.i18n.getMessage('notFound');

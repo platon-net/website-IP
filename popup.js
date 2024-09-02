@@ -5,8 +5,12 @@ function updateButtonStatus() {
 		//		set the button to the correct value
 
 		//reverse because the value represent the opposite of current
-		document.querySelector('#enableDisableIPButton').value = isEnabled ? 'false' : 'true';
-		document.querySelector('#enableDisableIPButton').innerHTML = browser.i18n.getMessage(isEnabled ? 'disable' : 'enable');
+		var button = document.querySelector('#enableDisableIPButton');
+		if (button) {
+			document.querySelector('#enableDisableIPButton').value = isEnabled ? 'false' : 'true';
+			var button_html = browser.i18n.getMessage(isEnabled ? 'disable' : 'enable');
+			document.querySelector('#enableDisableIPButton').innerHTML = button_html;
+		}
 	});
 }
 
