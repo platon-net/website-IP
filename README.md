@@ -4,6 +4,10 @@ Browser extension which simply adds the IP of the current website you are viewin
 
 Fork of [https://github.com/tinybigideas/WebsiteIP](https://github.com/ben8p/chrome-extension-website-IP)
 
+Installation from Mozilla Addons
+================================
+Go to [https://addons.mozilla.org/sk/firefox/addon/platon-website-ip/](https://addons.mozilla.org/sk/firefox/addon/platon-website-ip/) or search "Platon Website IP"
+
 Installation from file in Firefox
 =================================
 * In Firefox open on new tab "about:config" and type "xpinstall.signatures.required" where change to "false"
