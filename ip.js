@@ -1,25 +1,38 @@
-browser.runtime.sendMessage({name: 'isEnabled'}, function(isEnabled) {
-	// summary:
-	//		only do stuff if enabled
-	if(!isEnabled) { return; }
+document.addEventListener('DOMContentLoaded', function() {
+	loadIPaddressOnlyEnabled();
+});
 
+function loadIPaddressOnlyEnabled() {
+	browser.runtime.sendMessage({name: 'isEnabled'}, function(isEnabled) {
+		// summary:
+		//		only do stuff if enabled
+		if(!isEnabled) { return; }
+
+		loadIPaddress();
+
+	});
+}
+
+var loadIPaddress_try_again = 10;
+function loadIPaddress() {
 	browser.runtime.sendMessage({name: 'getIP'}, function(response) {
 		// summary:
 		//		grab the ip
 
 		console.log(response);
-		if(!response || !response.ip || response.ip === '::') { return; }
-
-		var websiteip = document.createElement('websiteip');
-
-		websiteip.id = 'chrome_websiteIP';
-		//websiteip.className = 'chrome_websiteIP_right';
-		var response_ip = response.ip;
-		if (response_ip == null
-			|| response_ip == undefined)
-		{
-			response_ip = 'N/A'
+		var response_ip = 'N/A';
+		if(response && response.ip && response.ip != null && response.ip != undefined) {
+			response_ip = response.ip;
 		}
+
+
+		var websiteip = document.getElementById('chrome_websiteIP');
+		if (websiteip == null) {
+			websiteip = document.createElement('websiteip');
+			websiteip.id = 'chrome_websiteIP';
+			//websiteip.className = 'chrome_websiteIP_right';
+		}
+
 		websiteip.innerHTML = response_ip;
 		if(document && document.body) {
 			document.body.appendChild(websiteip);
@@ -36,8 +49,17 @@ browser.runtime.sendMessage({name: 'isEnabled'}, function(isEnabled) {
 		*/
 		dragElement(websiteip);
 		refrestLastPosition();
+
+		if (response_ip == 'N/A') {
+			if (loadIPaddress_try_again-- > 0) {
+				websiteip.innerHTML += ' - try again '+loadIPaddress_try_again.toString();
+				setTimeout(loadIPaddress, 3000);
+			} else {
+				websiteip.innerHTML += ' - FAILED';
+			}
+		}
 	});
-});
+}
 
 function dragElement(elmnt) {
 	var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
