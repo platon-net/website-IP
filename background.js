@@ -48,6 +48,18 @@ browser.runtime.onMessage.addListener(
 				input.remove();
 			});
 			break;
+		case 'setLastPosition':
+			localStorage.setItem('websiteIPlastPositionTop', request.position.top);
+			localStorage.setItem('websiteIPlastPositionLeft', request.position.left);
+			break;
+		case 'getLastPosition':
+			sendResponse({
+				position: {
+					top: localStorage.getItem('websiteIPlastPositionTop'),
+					left: localStorage.getItem('websiteIPlastPositionLeft')
+				}
+			});
+			break;
 		default:
 			sendResponse({});
 		}

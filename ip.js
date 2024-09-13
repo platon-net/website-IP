@@ -20,7 +20,7 @@ browser.runtime.sendMessage({name: 'isEnabled'}, function(isEnabled) {
 		{
 			response_ip = 'N/A'
 		}
-		websiteip.innerHTML = response.ip;
+		websiteip.innerHTML = response_ip;
 		if(document && document.body) {
 			document.body.appendChild(websiteip);
 		}
@@ -35,6 +35,7 @@ browser.runtime.sendMessage({name: 'isEnabled'}, function(isEnabled) {
 		}, false);
 		*/
 		dragElement(websiteip);
+		refrestLastPosition();
 	});
 });
 
@@ -61,8 +62,13 @@ function dragElement(elmnt) {
 		pos3 = e.clientX;
 		pos4 = e.clientY;
 		// Nastav novú pozíciu elementu
-		elmnt.style.top = (Math.max(elmnt.offsetTop - pos2, 0)) + "px";
-		elmnt.style.left = (Math.max(elmnt.offsetLeft - pos1, 0)) + "px";
+		var new_top = Math.max(elmnt.offsetTop - pos2, 0);
+		var new_left = Math.max(elmnt.offsetLeft - pos1, 0);
+		elmnt.style.top = new_top + "px";
+		elmnt.style.left = new_left + "px";
+		localStorage.setItem('website_position_top', new_top);
+		localStorage.setItem('website_position_left', new_left);
+		browser.runtime.sendMessage({name: 'setLastPosition', position: {top: new_top, left: new_left}});
 	}
 
 	function closeDragElement() {
@@ -70,4 +76,23 @@ function dragElement(elmnt) {
 		document.onmouseup = null;
 		document.onmousemove = null;
 	}
+}
+
+document.addEventListener('visibilitychange', function() {
+	if (document.visibilityState === 'visible') {
+		refrestLastPosition();
+	}
+});
+
+function refrestLastPosition() {
+	browser.runtime.sendMessage({name: 'getLastPosition'}, function(response){
+		if (response.position == null) return false;
+		var websiteip = document.getElementById('chrome_websiteIP');
+		var last_top = response.position.top;
+		var last_left = response.position.left;
+		if (last_top != null && last_left != null) {
+			websiteip.style.top = last_top + "px";
+			websiteip.style.left = last_left + "px";
+		}
+	});
 }
