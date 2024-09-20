@@ -1,19 +1,27 @@
-document.addEventListener('DOMContentLoaded', function() {
-	loadIPaddressOnlyEnabled();
-});
+// document.addEventListener('DOMContentLoaded', function() {
+// 	console.log('DOMContentLoaded');
+// 	loadIPaddressOnlyEnabled();
+// });
+
+loadIPaddressOnlyEnabled();
 
 function loadIPaddressOnlyEnabled() {
+	// console.log('loadIPaddressOnlyEnabled');
+
 	browser.runtime.sendMessage({name: 'isEnabled'}, function(isEnabled) {
 		// summary:
 		//		only do stuff if enabled
-		if(!isEnabled) { return; }
+		if(!isEnabled) {
+			// console.log('disabled websiteIP');
+			return;
+		}
 
 		loadIPaddress();
 
 	});
 }
 
-var loadIPaddress_try_again = 10;
+var loadIPaddress_try_again = 3;
 function loadIPaddress() {
 	browser.runtime.sendMessage({name: 'getIP'}, function(response) {
 		// summary:
@@ -26,11 +34,12 @@ function loadIPaddress() {
 		}
 
 
-		var websiteip = document.getElementById('chrome_websiteIP');
+		var websiteip = document.getElementById('box_websiteIP');
 		if (websiteip == null) {
-			websiteip = document.createElement('websiteip');
-			websiteip.id = 'chrome_websiteIP';
-			//websiteip.className = 'chrome_websiteIP_right';
+			websiteip = document.createElement('div');
+			websiteip.id = 'box_websiteIP';
+			//websiteip.src = chrome.runtime.getURL('content/index.html');
+			//websiteip.className = 'box_websiteIP_right';
 		}
 
 		websiteip.innerHTML = response_ip;
@@ -40,10 +49,10 @@ function loadIPaddress() {
 
 		/*
 		websiteip.addEventListener('mouseover', function() {
-			if(this.className.indexOf('chrome_websiteIP_right') !== -1) {
-				this.className = this.className.replace('chrome_websiteIP_right', 'chrome_websiteIP_left');
+			if(this.className.indexOf('box_websiteIP_right') !== -1) {
+				this.className = this.className.replace('box_websiteIP_right', 'box_websiteIP_left');
 			} else {
-				this.className = this.className.replace('chrome_websiteIP_left', 'chrome_websiteIP_right');
+				this.className = this.className.replace('box_websiteIP_left', 'box_websiteIP_right');
 			}
 		}, false);
 		*/
@@ -109,7 +118,8 @@ document.addEventListener('visibilitychange', function() {
 function refrestLastPosition() {
 	browser.runtime.sendMessage({name: 'getLastPosition'}, function(response){
 		if (response.position == null) return false;
-		var websiteip = document.getElementById('chrome_websiteIP');
+		var websiteip = document.getElementById('box_websiteIP');
+		if (websiteip == null) return false;
 		var last_top = response.position.top;
 		var last_left = response.position.left;
 		if (last_top != null && last_left != null) {

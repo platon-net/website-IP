@@ -33,3 +33,24 @@ document.querySelector('#copyToClipboard').addEventListener('click', function() 
 });
 
 updateButtonStatus();
+
+function updateIPaddress() {
+	browser.tabs.query({ active: true, currentWindow: true }).then((tabs) => {
+		let currentTab = tabs[0]; // Prvý (a jediný) aktívny tab v aktuálnom okne
+		console.log(currentTab);
+
+		browser.runtime.sendMessage({name: 'getIPbyURL', url: currentTab.url}, function(response) {
+			console.log(response);
+			var response_ip = 'N/A';
+			if(response && response.ip && response.ip != null && response.ip != undefined) {
+				response_ip = response.ip;
+			}
+			document.getElementById('ip-address').innerHTML = response_ip;
+		});
+
+	  }).catch((error) => {
+		console.error(`Error: ${error}`);
+	  });
+}
+
+updateIPaddress();

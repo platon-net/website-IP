@@ -1,4 +1,4 @@
-websiteip#chrome_websiteIP {
+div#box_websiteIP {
 	position: fixed;
 	bottom: 0;
 	background: #F1EDED;
@@ -28,15 +28,15 @@ websiteip#chrome_websiteIP {
 	border-radius: 5px;
 }
 
-websiteip#chrome_websiteIP.chrome_websiteIP_right {
+div#box_websiteIP.box_websiteIP_right {
 	right: 1%;
 }
 
-websiteip#chrome_websiteIP.chrome_websiteIP_left {
+div#box_websiteIP.box_websiteIP_left {
 	left: 1%;
 }
 
 /* hide if in print view */
 @media print {
-	websiteip#chrome_websiteIP {display:none;}
+	div#box_websiteIP {display:none;}
 }

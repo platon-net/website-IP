@@ -3,7 +3,7 @@
 
 	"name": "__MSG_name__",
 	"description": "__MSG_description__",
-	"version": "1.2.4",
+	"version": "1.2.5",
 	"browser_specific_settings": {
 		"gecko": {
 		  "id": "websiteip@platon.org"
@@ -19,6 +19,7 @@
 
 	"default_locale": "en",
 	"permissions": [
+		"activeTab",
 		"tabs",
 		"webRequest",
 		"webRequestBlocking"
@@ -45,10 +46,17 @@
 
 	"content_scripts": [{
 		"all_frames": false,
-		"run_at": "document_end",
+		"run_at": "document_start",
 		"js": ["ip.js"],
 		"css": ["css/ip.css"],
 		"matches": ["http://*/*", "https://*/*"]
-	}]
+	}],
+
+	"web_accessible_resources": [
+		{
+		  "resources": [ "content/*" ],
+		  "matches": [ "http://*/*", "https://*/*" ]
+		}
+	]
 
 }
