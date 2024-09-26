@@ -17,6 +17,9 @@
 	"copyToClipboard": {
 		"message": "Copy IP into clipboard"
 	},
+	"clipboardCopied": {
+		"message": "The IP address has been copied to the clipboard"
+	},
 	"notFound": {
 		"message": "Unable to find the IP"
 	}

@@ -23,14 +23,42 @@ document.querySelector('#enableDisableIPButton').addEventListener('click', funct
 	} else {
 		browser.runtime.sendMessage({name: 'setEnabled', status: true}, updateButtonStatus);
 	}
+	document.getElementById('label-message-info').classList.remove('hide');
 });
 
 document.querySelector('#copyToClipboard').addEventListener('click', function() {
 	// content script
+	/*
 	browser.runtime.sendMessage({
 		name: 'copyIP'
 	});
+	*/
+	var ip_address = document.getElementById('ip-address').innerHTML;
+	clipboardSet(ip_address);
+	document.getElementById('label-message-clipboardCopied').classList.remove('hide');
+	setTimeout(function(){
+		document.getElementById('label-message-clipboardCopied').classList.add('hide');
+	}, 3000);
 });
+
+function clipboardSet(value) {
+	if (document.getElementById('copy-to-clipboard') == null) {
+		// $('body').append('<textarea type="text" style="position: absolute; top: -1000px; left: -1000px;" id="copy-to-clipboard"></textarea>');
+		var textarea = document.createElement('textarea');
+		textarea.type = 'text';
+		textarea.style.position = 'absolute';
+		textarea.style.top = '-1000px';
+		textarea.style.left = '-1000px';
+		textarea.id = 'copy-to-clipboard';
+		document.body.appendChild(textarea);
+	}
+	var copyText = document.getElementById('copy-to-clipboard');
+	copyText.innerHTML = value;
+	copyText.select();
+	copyText.setSelectionRange(0, 99999); /*For mobile devices*/
+	document.execCommand("copy");
+	copyText.remove();
+}
 
 updateButtonStatus();
 

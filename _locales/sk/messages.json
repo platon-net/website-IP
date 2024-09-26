@@ -17,6 +17,9 @@
 	"copyToClipboard": {
 		"message": "Skopírovať IP do schránky"
 	},
+	"clipboardCopied": {
+		"message": "IP adresa bola skopírovaná do schránky"
+	},
 	"notFound": {
 		"message": "Nie je možné nájsť IP adresu"
 	}

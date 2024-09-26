@@ -28,6 +28,7 @@ browser.webRequest.onCompleted.addListener(
 // use in case ip is not resolved by top_frame request
 const xDNS = href => new Promise((resolve, reject) => {
 	// console.log('xDNS = ' + href);
+	if (!href.startsWith('http')) return false;
 
 	const {origin} = new URL(href);
 
