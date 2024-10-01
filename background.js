@@ -1,3 +1,5 @@
+import { Reader } from './node_modules/libmaxmind/index.mjs';
+
 // Extract domain name (DN) from URL
 function url2dn(url) {
 	var tmpa = document.createElement('a');
@@ -85,6 +87,21 @@ function getIPfromURL(url) {
 	return null;
 }
 
+function geoIPmaxmind(ip_address, callback) {
+	// console.log('geoIPmaxmind = '+ip_address);
+	fetch(browser.runtime.getURL('MaxMind/GeoLite2-Country.mmdb'))
+		.then(response => response.arrayBuffer())
+		.then(arrayBuffer => {
+			var reader = new Reader(arrayBuffer);
+			var result = reader.get(ip_address);
+			if (callback != null) callback({
+				'iso_code': result.country.iso_code,
+				'name': result.country.names.en
+			});
+		})
+		.catch(error => console.error('Error loading MMDB:', error));
+}
+
 // Listeners
 browser.runtime.onMessage.addListener(
 	function(request, sender, sendResponse) {
@@ -134,8 +151,14 @@ browser.runtime.onMessage.addListener(
 				}
 			});
 			break;
+		case 'geoIP':
+			geoIPmaxmind(request.ip_address, function(result){
+				sendResponse({ip_address: request.ip_address, format: 'maxmind', data: result});
+			});
+			break;
 		default:
 			sendResponse({});
 		}
+		return true;
 	}
 );

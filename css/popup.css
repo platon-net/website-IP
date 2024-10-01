@@ -23,3 +23,9 @@ input {
 	position: relative;
 	float: right;
 }
+
+.ip-country-flag {
+	height: 20px;
+	position: relative;
+	top: 3px;
+}

@@ -27,7 +27,7 @@ function loadIPaddress() {
 		// summary:
 		//		grab the ip
 
-		console.log(response);
+		// console.log(response);
 		var response_ip = 'N/A';
 		if(response && response.ip && response.ip != null && response.ip != undefined) {
 			response_ip = response.ip;
@@ -66,6 +66,16 @@ function loadIPaddress() {
 			} else {
 				websiteip.innerHTML += ' - FAILED';
 			}
+		} else {
+			geoIP(response_ip, function(response){
+				var flag = document.createElement('img');
+				flag.height = 20;
+				flag.alt = response.data.name;
+				flag.title = response.data.name;
+				flag.src = browser.runtime.getURL('images/flags/'+response.data.iso_code+'.png');
+				flag.classList.add('websiteip-flag');
+				websiteip.appendChild(flag);
+			});
 		}
 	});
 }
@@ -117,7 +127,7 @@ document.addEventListener('visibilitychange', function() {
 
 function refrestLastPosition() {
 	browser.runtime.sendMessage({name: 'getLastPosition'}, function(response){
-		if (response.position == null) return false;
+		if (response == null || response.position == null) return false;
 		var websiteip = document.getElementById('box_websiteIP');
 		if (websiteip == null) return false;
 		var last_top = response.position.top;
@@ -126,5 +136,13 @@ function refrestLastPosition() {
 			websiteip.style.top = last_top + "px";
 			websiteip.style.left = last_left + "px";
 		}
+	});
+}
+
+function geoIP(ip_address, callback) {
+	// console.log('geoIP', ip_address);
+	browser.runtime.sendMessage({name: 'geoIP', ip_address: ip_address}, function(response) {
+		console.log('pre IP = ', ip_address, 'odpoved geoIP = ', response);
+		if (callback != null) callback(response);
 	});
 }

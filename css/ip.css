@@ -36,6 +36,12 @@ div#box_websiteIP.box_websiteIP_left {
 	left: 1%;
 }
 
+div#box_websiteIP .websiteip-flag {
+	float: left;
+	height: 20px;
+	margin-right: 5px;
+}
+
 /* hide if in print view */
 @media print {
 	div#box_websiteIP {display:none;}

@@ -65,15 +65,18 @@ updateButtonStatus();
 function updateIPaddress() {
 	browser.tabs.query({ active: true, currentWindow: true }).then((tabs) => {
 		let currentTab = tabs[0]; // Prvý (a jediný) aktívny tab v aktuálnom okne
-		console.log(currentTab);
+		// console.log(currentTab);
 
 		browser.runtime.sendMessage({name: 'getIPbyURL', url: currentTab.url}, function(response) {
-			console.log(response);
+			// console.log(response);
 			var response_ip = 'N/A';
 			if(response && response.ip && response.ip != null && response.ip != undefined) {
 				response_ip = response.ip;
 			}
 			document.getElementById('ip-address').innerHTML = response_ip;
+			if (response_ip != 'N/A') {
+				updateIPflag(response_ip);
+			}
 		});
 
 	  }).catch((error) => {
@@ -82,3 +85,15 @@ function updateIPaddress() {
 }
 
 updateIPaddress();
+
+function updateIPflag(ip_address) {
+	browser.runtime.sendMessage({name: 'geoIP', ip_address: ip_address}, function(response) {
+		document.getElementById('ip-country').innerHTML = response.data.name;
+		var img_flag = document.createElement('img');
+		img_flag.classList.add('ip-country-flag');
+		img_flag.title = response.data.name;
+		img_flag.alt = response.data.name;
+		img_flag.src = browser.runtime.getURL('images/flags/'+response.data.iso_code+'.png');
+		document.getElementById('ip-country-flag').appendChild(img_flag);
+	});
+}
