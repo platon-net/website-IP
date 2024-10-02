@@ -17,8 +17,15 @@ function loadIPaddressOnlyEnabled() {
 		}
 
 		loadIPaddress();
+		setInterval(checkBox, 10000);
 
 	});
+}
+
+function checkBox() {
+	var websiteip = document.getElementById('box_websiteIP');
+	if (websiteip != null) return true;
+	loadIPaddress();
 }
 
 var loadIPaddress_try_again = 3;
@@ -40,12 +47,13 @@ function loadIPaddress() {
 			websiteip.id = 'box_websiteIP';
 			//websiteip.src = chrome.runtime.getURL('content/index.html');
 			//websiteip.className = 'box_websiteIP_right';
+			if(document && document.body) {
+				document.body.appendChild(websiteip);
+			}
 		}
 
 		websiteip.innerHTML = response_ip;
-		if(document && document.body) {
-			document.body.appendChild(websiteip);
-		}
+
 
 		/*
 		websiteip.addEventListener('mouseover', function() {
@@ -57,7 +65,7 @@ function loadIPaddress() {
 		}, false);
 		*/
 		dragElement(websiteip);
-		refrestLastPosition();
+		refreshLastPosition();
 
 		if (response_ip == 'N/A') {
 			if (loadIPaddress_try_again-- > 0) {
@@ -121,11 +129,11 @@ function dragElement(elmnt) {
 
 document.addEventListener('visibilitychange', function() {
 	if (document.visibilityState === 'visible') {
-		refrestLastPosition();
+		refreshLastPosition();
 	}
 });
 
-function refrestLastPosition() {
+function refreshLastPosition() {
 	browser.runtime.sendMessage({name: 'getLastPosition'}, function(response){
 		if (response == null || response.position == null) return false;
 		var websiteip = document.getElementById('box_websiteIP');
