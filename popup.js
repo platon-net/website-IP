@@ -97,3 +97,17 @@ function updateIPflag(ip_address) {
 		document.getElementById('ip-country-flag').appendChild(img_flag);
 	});
 }
+
+document.getElementById('domain-additional-info').addEventListener('click', function(){
+	var domain_addinfo_result =  document.getElementById('domain-addinfo-result');
+	domain_addinfo_result.classList.remove('hide');
+	domain_addinfo_result.innerHTML = 'Loading...';
+	browser.tabs.query({ active: true, currentWindow: true }).then((tabs) => {
+		let currentTab = tabs[0]; // Prvý (a jediný) aktívny tab v aktuálnom okne
+		let url = new URL(currentTab.url);
+ 		let domain = url.hostname;
+		browser.runtime.sendMessage({name: 'addinfo', domain: domain}, function(response) {
+			domain_addinfo_result.innerHTML = response.data.html;
+		});
+	});
+});

@@ -1,4 +1,4 @@
-div#box_websiteIP {
+div#box_websiteIP{
 	position: fixed;
 	bottom: 0;
 	background: #F1EDED;
@@ -18,7 +18,8 @@ div#box_websiteIP {
 	/*-webkit-touch-callout: none;
 	-webkit-user-select: none;
 	user-select: none;*/
-	display:block;
+	display: flex;
+	flex-direction: row;
 	height: 20px;
 	min-height:11px;
 	/* max-height:11px; */
@@ -28,6 +29,9 @@ div#box_websiteIP {
 	border-radius: 5px;
 }
 
+/* ----------------------------------------------------
+ * IP box
+ */
 div#box_websiteIP.box_websiteIP_right {
 	right: 1%;
 }
@@ -37,9 +41,73 @@ div#box_websiteIP.box_websiteIP_left {
 }
 
 div#box_websiteIP .websiteip-flag {
-	float: left;
+	/* float: left; */
 	height: 20px;
 	margin-right: 5px;
+}
+
+div#box_websiteIP .websiteip-icon {
+	margin-left: 10px;
+	cursor: pointer;
+}
+
+/* ----------------------------------------------------
+ * Additional Info box
+ */
+div#box_websiteIP_addinfo {
+	position: fixed;
+	top: 10px;
+	left: 10px;
+	background: #F1EDED;
+	padding: 5px;
+	border: 1px solid #919191;
+	font-size: 14px;
+	font-weight: bold;
+	color: #333;
+	font-family: 'Arial', Helvetica, sans-serif;
+	cursor: default;
+	z-index: 9999999999;
+	line-height: 20px;
+	margin: 0;
+	display: block;
+	width:auto;
+	height: auto;
+	box-sizing: content-box !important;
+	border-radius: 5px;
+}
+div#box_websiteIP_addinfo a,
+div#box_websiteIP_addinfo a:visited {
+	color: blue;
+	text-decoration: none;
+}
+div#box_websiteIP_addinfo a:hover {
+	text-decoration: underline;
+}
+div#box_websiteIP_addinfo h1 {
+	font-size: 28px;
+}
+div#box_websiteIP_addinfo h2 {
+	font-size: 24px;
+}
+div#box_websiteIP_addinfo h3 {
+	font-size: 20px;
+}
+div#box_websiteIP_addinfo h4 {
+	font-size: 16px;
+}
+div#box_websiteIP_addinfo #websiteip-addinfo-control {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	border-bottom: 1px #919191 solid;
+	padding-bottom: 2px;
+}
+div#box_websiteIP_addinfo #websiteip-addinfo-control img {
+	cursor: pointer;
+}
+div#box_websiteIP_addinfo #websiteip-addinfo-control img:hover {
+	background-color: #ff9a9a;
+	border-radius: 10px;
 }
 
 /* hide if in print view */

@@ -29,3 +29,9 @@ input {
 	position: relative;
 	top: 3px;
 }
+
+#domain-addinfo-result {
+	margin-top: 10px;
+	border-top: 1px black solid;
+	padding-top: 10px;
+}

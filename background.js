@@ -127,10 +127,32 @@ function webservice(service, params, callback) {
 
 function geoIPwebservice(ip_address, callback) {
 	webservice('geoip', {ip_address: ip_address}, function(response){
-		if (callback != null) callback({
-			'iso_code': response.data.iso_code,
-			'name': response.data.name
-		});
+		var result = {};
+		if (response.status == 'OK') {
+			result = {
+				'iso_code': response.data.iso_code,
+				'name': response.data.name
+			};
+		} else {
+			console.error(response.msg);
+			result = {'iso_code': 'N/A', 'name': 'N/A'};
+		}
+		if (callback != null) callback(result);
+	});
+}
+
+function addInfoWebservice(domain, callback) {
+	webservice('domain_additional_info', {domain: domain}, function(response){
+		var result = {};
+		if (response.status == 'OK') {
+			result = {
+				'html': response.data.html
+			};
+		} else {
+			console.error(response.msg);
+			result = {'html': response.msg};
+		}
+		if (callback != null) callback(result);
 	});
 }
 
@@ -149,7 +171,8 @@ browser.runtime.onMessage.addListener(
 			break;
 		case 'getIP':
 			sendResponse({
-				ip: getIPfromURL(sender.tab.url)
+				ip: getIPfromURL(sender.tab.url),
+				is_webservice_enabled: isWebserviceEnabled()
 			});
 			break;
 		case 'getIPbyURL':
@@ -186,12 +209,21 @@ browser.runtime.onMessage.addListener(
 		case 'geoIP':
 			if (isWebserviceEnabled()) {
 				geoIPwebservice(request.ip_address, function(result){
-					sendResponse({ip_address: request.ip_address, format: 'webservice', data: result});
+					sendResponse({ip_address: request.ip_address, source: 'webservice', data: result});
 				});
 			} else {
 				geoIPmaxmind(request.ip_address, function(result){
-					sendResponse({ip_address: request.ip_address, format: 'maxmind', data: result});
+					sendResponse({ip_address: request.ip_address, source: 'maxmind', data: result});
 				});
+			}
+			break;
+		case 'addinfo':
+			if (isWebserviceEnabled()) {
+				addInfoWebservice(request.domain, function(result){
+					sendResponse({domain: request.domain, source: 'webservice', data: result});
+				});
+			} else {
+				sendResponse({domain: request.domain, source: 'local', data: {html: 'Not implemented localy, required webservice'}});
 			}
 			break;
 		default:

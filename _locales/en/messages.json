@@ -31,5 +31,8 @@
 	},
 	"saveLabel": {
 		"message": "Options was saved."
+	},
+	"close": {
+		"message": "Close"
 	}
 }

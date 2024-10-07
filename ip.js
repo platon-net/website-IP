@@ -52,8 +52,7 @@ function loadIPaddress() {
 			}
 		}
 
-		websiteip.innerHTML = response_ip;
-
+		websiteip.innerHTML = '<span class="websiteip-ip">'+response_ip+'</span>';
 
 		/*
 		websiteip.addEventListener('mouseover', function() {
@@ -64,7 +63,7 @@ function loadIPaddress() {
 			}
 		}, false);
 		*/
-		dragElement(websiteip);
+		dragElement(websiteip, true);
 		refreshLastPosition();
 
 		if (response_ip == 'N/A') {
@@ -82,13 +81,23 @@ function loadIPaddress() {
 				flag.title = response.data.name;
 				flag.src = browser.runtime.getURL('images/flags/'+response.data.iso_code+'.png');
 				flag.classList.add('websiteip-flag');
-				websiteip.appendChild(flag);
+				// websiteip.appendChild(flag);
+				websiteip.insertBefore(flag, websiteip.firstChild);
 			});
 		}
+
+		if (response.is_webservice_enabled) {
+			var addinfo = document.createElement('span');
+			addinfo.classList.add('websiteip-icon');
+			addinfo.innerHTML = '<img src="'+browser.runtime.getURL('images/icon-info.svg')+'" title="Additional info" width="20" height="20">';
+			addinfo.addEventListener('click', websiteipAdditionalInfo);
+			websiteip.appendChild(addinfo);
+		}
+
 	});
 }
 
-function dragElement(elmnt) {
+function dragElement(elmnt, savepostion) {
 	var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
 	elmnt.onmousedown = dragMouseDown;
 
@@ -115,9 +124,11 @@ function dragElement(elmnt) {
 		var new_left = Math.max(elmnt.offsetLeft - pos1, 0);
 		elmnt.style.top = new_top + "px";
 		elmnt.style.left = new_left + "px";
-		localStorage.setItem('website_position_top', new_top);
-		localStorage.setItem('website_position_left', new_left);
-		browser.runtime.sendMessage({name: 'setLastPosition', position: {top: new_top, left: new_left}});
+		if (savepostion) {
+			localStorage.setItem('website_position_top', new_top);
+			localStorage.setItem('website_position_left', new_left);
+			browser.runtime.sendMessage({name: 'setLastPosition', position: {top: new_top, left: new_left}});
+		}
 	}
 
 	function closeDragElement() {
@@ -152,5 +163,32 @@ function geoIP(ip_address, callback) {
 	browser.runtime.sendMessage({name: 'geoIP', ip_address: ip_address}, function(response) {
 		console.log('pre IP = ', ip_address, 'odpoved geoIP = ', response);
 		if (callback != null) callback(response);
+	});
+}
+
+function websiteipAdditionalInfo() {
+	var domain = location.hostname;
+	var addinfo = document.getElementById('box_websiteIP_addinfo');
+	if (addinfo == null) {
+		addinfo = document.createElement('div');
+		addinfo.id = 'box_websiteIP_addinfo';
+		if(document && document.body) {
+			document.body.appendChild(addinfo);
+		}
+	}
+	addinfo.innerHTML = '<div id="websiteip-addinfo-control">'
+		+ '<div>WebsiteIP - Additional Domain Info</div>'
+		+ '<img src="'+browser.runtime.getURL('images/icon-close.svg')+'" alt="Close" title="Close" width="20" height="20" id="websiteip-addinfo-close">'
+		+ '</div>'
+		+ '<div id="websiteip-addinfo-content">Loading...</div>';
+
+	document.getElementById('websiteip-addinfo-close').addEventListener('click', function(){
+		document.getElementById('box_websiteIP_addinfo').remove();
+	});
+
+	dragElement(addinfo, false);
+
+	browser.runtime.sendMessage({name: 'addinfo', domain: domain}, function(response) {
+		document.getElementById('websiteip-addinfo-content').innerHTML = response.data.html;
 	});
 }
