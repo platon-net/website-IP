@@ -22,5 +22,14 @@
 	},
 	"notFound": {
 		"message": "Nie je možné nájsť IP adresu"
+	},
+	"webserviceEndpointURL": {
+		"message": "URL webovej služby"
+	},
+	"save": {
+		"message": "Uložiť"
+	},
+	"saveLabel": {
+		"message": "Options was saved."
 	}
 }

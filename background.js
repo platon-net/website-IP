@@ -102,6 +102,38 @@ function geoIPmaxmind(ip_address, callback) {
 		.catch(error => console.error('Error loading MMDB:', error));
 }
 
+function isWebserviceEnabled() {
+	return localStorage.getItem('webservice_endpoint_url').length > 0;
+}
+
+function webservice(service, params, callback) {
+	var webservice_endpoint_url = localStorage.getItem('webservice_endpoint_url')+'?ws='+service;
+	var form_data  = new FormData();
+	Object.keys(params).forEach(key => {
+		form_data.append(key, params[key]);
+	});
+	fetch(webservice_endpoint_url, {
+		method: 'POST',
+		// headers: { 'Content-Type': 'application/json' },
+		// body: JSON.stringify(params)
+		body: form_data
+	})
+	.then(response => response.json())
+	.then(json => {
+		if (callback != null) callback(json);
+	})
+	.catch(error => console.error('Error loading MMDB:', error));
+}
+
+function geoIPwebservice(ip_address, callback) {
+	webservice('geoip', {ip_address: ip_address}, function(response){
+		if (callback != null) callback({
+			'iso_code': response.data.iso_code,
+			'name': response.data.name
+		});
+	});
+}
+
 // Listeners
 browser.runtime.onMessage.addListener(
 	function(request, sender, sendResponse) {
@@ -152,9 +184,15 @@ browser.runtime.onMessage.addListener(
 			});
 			break;
 		case 'geoIP':
-			geoIPmaxmind(request.ip_address, function(result){
-				sendResponse({ip_address: request.ip_address, format: 'maxmind', data: result});
-			});
+			if (isWebserviceEnabled()) {
+				geoIPwebservice(request.ip_address, function(result){
+					sendResponse({ip_address: request.ip_address, format: 'webservice', data: result});
+				});
+			} else {
+				geoIPmaxmind(request.ip_address, function(result){
+					sendResponse({ip_address: request.ip_address, format: 'maxmind', data: result});
+				});
+			}
 			break;
 		default:
 			sendResponse({});

@@ -22,5 +22,14 @@
 	},
 	"notFound": {
 		"message": "Unable to find the IP"
+	},
+	"webserviceEndpointURL": {
+		"message": "Webservice endpoint URL"
+	},
+	"save": {
+		"message": "Uložiť"
+	},
+	"saveLabel": {
+		"message": "Options was saved."
 	}
 }

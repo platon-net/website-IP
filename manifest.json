@@ -54,6 +54,10 @@
 		"matches": ["http://*/*", "https://*/*"]
 	}],
 
+	"options_ui": {
+		"page": "options.html"
+	},
+
 	"web_accessible_resources": [
 		{
 		  "resources": [ "content/*", "images/*" ],
