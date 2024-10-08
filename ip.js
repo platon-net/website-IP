@@ -176,8 +176,9 @@ function websiteipAdditionalInfo() {
 			document.body.appendChild(addinfo);
 		}
 	}
+	var websiteip_icon = '<img src="'+browser.runtime.getURL('images/icon48.png')+'" alt="" width="20" height="20" style="top: 5px; position: relative; margin-right: 5px;">';
 	addinfo.innerHTML = '<div id="websiteip-addinfo-control">'
-		+ '<div>WebsiteIP - Additional Domain Info</div>'
+		+ '<div>'+websiteip_icon+'WebsiteIP &mdash; Additional Domain Info</div>'
 		+ '<img src="'+browser.runtime.getURL('images/icon-close.svg')+'" alt="Close" title="Close" width="20" height="20" id="websiteip-addinfo-close">'
 		+ '</div>'
 		+ '<div id="websiteip-addinfo-content">Loading...</div>';

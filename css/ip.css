@@ -44,6 +44,7 @@ div#box_websiteIP .websiteip-flag {
 	/* float: left; */
 	height: 20px;
 	margin-right: 5px;
+	width: auto;
 }
 
 div#box_websiteIP .websiteip-icon {
@@ -104,6 +105,7 @@ div#box_websiteIP_addinfo #websiteip-addinfo-control {
 }
 div#box_websiteIP_addinfo #websiteip-addinfo-control img {
 	cursor: pointer;
+	width: auto;
 }
 div#box_websiteIP_addinfo #websiteip-addinfo-control img:hover {
 	background-color: #ff9a9a;
