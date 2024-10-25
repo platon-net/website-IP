@@ -103,7 +103,9 @@ function geoIPmaxmind(ip_address, callback) {
 }
 
 function isWebserviceEnabled() {
-	return localStorage.getItem('webservice_endpoint_url').length > 0;
+	var url = localStorage.getItem('webservice_endpoint_url');
+	if (url == null || url == undefined) return false;
+	return url.trim().length > 0;
 }
 
 function webservice(service, params, callback) {
