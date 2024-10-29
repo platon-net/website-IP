@@ -52,6 +52,11 @@ div#box_websiteIP .websiteip-icon {
 	cursor: pointer;
 }
 
+div#box_websiteIP .websiteip-icon img {
+	width: 20px;
+	height: 20px;
+}
+
 /* ----------------------------------------------------
  * Additional Info box
  */
@@ -105,12 +110,14 @@ div#box_websiteIP_addinfo #websiteip-addinfo-control {
 }
 div#box_websiteIP_addinfo #websiteip-addinfo-control img {
 	cursor: pointer;
-	width: auto;
+	width: 20px;
+	height: 20px;
 }
 div#box_websiteIP_addinfo #websiteip-addinfo-control img:hover {
 	background-color: #ff9a9a;
 	border-radius: 10px;
 }
+
 
 /* hide if in print view */
 @media print {
