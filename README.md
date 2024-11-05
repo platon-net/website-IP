@@ -1,4 +1,4 @@
-WebsiteIP
+<img src="images/icon48.png" alt="Logo" width="32" height="32"> WebsiteIP
 =========
 Browser extension which simply adds the IP of the current website you are viewing to the bottom right.
 
