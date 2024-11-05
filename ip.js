@@ -122,6 +122,8 @@ function dragElement(elmnt, savepostion) {
 		// Nastav novú pozíciu elementu
 		var new_top = Math.max(elmnt.offsetTop - pos2, 0);
 		var new_left = Math.max(elmnt.offsetLeft - pos1, 0);
+		new_top = Math.min(new_top, window.innerHeight - elmnt.offsetHeight - 10);
+		new_left = Math.min(new_left, window.innerWidth - elmnt.offsetWidth - 10);
 		elmnt.style.top = new_top + "px";
 		elmnt.style.left = new_left + "px";
 		if (savepostion) {
@@ -152,6 +154,8 @@ function refreshLastPosition() {
 		var last_top = response.position.top;
 		var last_left = response.position.left;
 		if (last_top != null && last_left != null) {
+			last_top = Math.min(last_top, window.innerHeight - websiteip.offsetHeight - 10);
+			last_left = Math.min(last_left, window.innerWidth - websiteip.offsetWidth - 10);
 			websiteip.style.top = last_top + "px";
 			websiteip.style.left = last_left + "px";
 		}
