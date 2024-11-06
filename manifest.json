@@ -44,7 +44,7 @@
 		"default_title": "__MSG_name__"
 	},
 
-	"homepage_url": "https://github.com/igorplaton/website-IP",
+	"homepage_url": "https://github.com/platon-net/website-IP",
 
 	"content_scripts": [{
 		"all_frames": false,
