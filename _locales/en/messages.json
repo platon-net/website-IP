@@ -6,16 +6,19 @@
 		"message": "Simple script which places the IP of the current website in the bottom right."
 	},
 	"enable": {
-		"message": "Enable"
+		"message": "Enable Addon"
 	},
 	"disable": {
-		"message": "Disable"
+		"message": "Disable Addon"
 	},
 	"info": {
 		"message": "You need to reload the page in order to see the change"
 	},
+	"loadAdditionalInfo": {
+		"message": "Load Additional Info"
+	},
 	"copyToClipboard": {
-		"message": "Copy IP into clipboard"
+		"message": "Copy IP"
 	},
 	"clipboardCopied": {
 		"message": "The IP address has been copied to the clipboard"
@@ -36,3 +39,4 @@
 		"message": "Close"
 	}
 }
+
