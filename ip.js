@@ -89,7 +89,7 @@ function loadIPaddress() {
 		if (response.is_webservice_enabled) {
 			var addinfo = document.createElement('span');
 			addinfo.classList.add('websiteip-icon');
-			addinfo.innerHTML = '<img src="'+browser.runtime.getURL('images/icon-info.svg')+'" title="Additional info" width="20" height="20">';
+			addinfo.innerHTML = '<img src="'+browser.runtime.getURL('images/icon-info2.svg')+'" title="Additional info" width="20" height="20">';
 			addinfo.addEventListener('click', websiteipAdditionalInfo);
 			websiteip.appendChild(addinfo);
 		}
