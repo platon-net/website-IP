@@ -171,6 +171,28 @@ browser.runtime.onMessage.addListener(
 			// request from the content script to get the options.
 			sendResponse(localStorage.getItem('websiteIPEnabled') === 'true' || localStorage.getItem('websiteIPEnabled') === null);
 			break;
+		case 'isEnabledForTab':
+			const general_enabled = localStorage.getItem('websiteIPEnabled') === 'true' || localStorage.getItem('websiteIPEnabled') === null;
+			if (!general_enabled) {
+				sendResponse({'status': false});
+				return;
+			}
+			browser.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+				const activeTab = tabs[0];
+				const tab_key = 'window_'+activeTab.windowId+'_tab_'+activeTab.id;
+				const tab_enabled = sessionStorage.getItem(tab_key) === 'true' || sessionStorage.getItem(tab_key) === null;
+				sendResponse({'tab_key': tab_key, 'status': tab_enabled});
+			});
+			break;
+		case 'setEnabledForTab':
+			browser.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+				const activeTab = tabs[0];
+				const tab_key = 'window_'+activeTab.windowId+'_tab_'+activeTab.id;
+				const tab_status = request.status ? 'true' : 'false';
+				sessionStorage.setItem(tab_key, tab_status);
+				sendResponse({'tab_key': tab_key, 'tab_status': tab_status});
+			});
+			break;
 		case 'getIP':
 			sendResponse({
 				ip: getIPfromURL(sender.tab.url),

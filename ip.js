@@ -8,18 +8,21 @@ loadIPaddressOnlyEnabled();
 function loadIPaddressOnlyEnabled() {
 	// console.log('loadIPaddressOnlyEnabled');
 
-	browser.runtime.sendMessage({name: 'isEnabled'}, function(isEnabled) {
-		// summary:
-		//		only do stuff if enabled
-		if(!isEnabled) {
+	browser.runtime.sendMessage({name: 'isEnabledForTab'}, function(response) {
+		if(!response.status) {
 			// console.log('disabled websiteIP');
 			return;
 		}
-
 		loadIPaddress();
 		setInterval(checkBox, 10000);
-
 	});
+}
+
+function closeBox() {
+	var websiteip = document.getElementById('box_websiteIP');
+	if (websiteip!= null) {
+		websiteip.parentNode.removeChild(websiteip);
+	}
 }
 
 function checkBox() {
@@ -93,6 +96,13 @@ function loadIPaddress() {
 			addinfo.addEventListener('click', websiteipAdditionalInfo);
 			websiteip.appendChild(addinfo);
 		}
+
+		var closeButton = document.createElement('span');
+		closeButton.classList.add('websiteip-icon');
+		closeButton.classList.add('on-hover');
+		closeButton.innerHTML = '<img src="'+browser.runtime.getURL('images/icon-close.svg')+'" title="Close for this tab" width="20" height="20">';
+		closeButton.addEventListener('click', closeForTab);
+		websiteip.appendChild(closeButton);
 
 	});
 }
@@ -180,7 +190,7 @@ function websiteipAdditionalInfo() {
 			document.body.appendChild(addinfo);
 		}
 	}
-	var websiteip_icon = '<img src="'+browser.runtime.getURL('images/icon48.png')+'" alt="" width="20" height="20" style="top: 5px; position: relative; margin-right: 5px;">';
+	var websiteip_icon = '<img src="'+browser.runtime.getURL('images/icon48.png')+'" alt="" width="20" height="20" style="top: 5px; position: relative; margin-right: 5px; float:left;">';
 	addinfo.innerHTML = '<div id="websiteip-addinfo-control">'
 		+ '<div>'+websiteip_icon+'WebsiteIP &mdash; Additional Domain Info</div>'
 		+ '<img src="'+browser.runtime.getURL('images/icon-close.svg')+'" alt="Close" title="Close" width="20" height="20" id="websiteip-addinfo-close">'
@@ -195,5 +205,14 @@ function websiteipAdditionalInfo() {
 
 	browser.runtime.sendMessage({name: 'addinfo', domain: domain}, function(response) {
 		document.getElementById('websiteip-addinfo-content').innerHTML = response.data.html;
+	});
+}
+
+function closeForTab() {
+	browser.runtime.sendMessage({name: 'setEnabledForTab', 'status': false}, function(response) {
+		// console.log(response);
+		if (response.tab_status == 'false') {
+			closeBox();
+		}
 	});
 }

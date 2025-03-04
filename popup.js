@@ -1,4 +1,11 @@
 
+document.addEventListener("DOMContentLoaded", () => {
+    const plugin_version = document.getElementById('plugin-version');
+    const manifestData = chrome.runtime.getManifest();
+    plugin_version.textContent = manifestData.version;
+});
+
+
 function updateButtonStatus() {
 	browser.runtime.sendMessage({name: 'isEnabled'}, function(isEnabled) {
 		// summary:

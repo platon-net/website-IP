@@ -49,6 +49,7 @@ div#box_websiteIP .websiteip-flag {
 	height: 20px;
 	margin-right: 5px;
 	width: auto;
+	position: initial;
 }
 
 div#box_websiteIP .websiteip-icon {
@@ -59,6 +60,14 @@ div#box_websiteIP .websiteip-icon {
 div#box_websiteIP .websiteip-icon img {
 	width: 20px;
 	height: 20px;
+	position: initial;
+}
+
+div#box_websiteIP .on-hover {
+	display: none;
+}
+div#box_websiteIP:hover .on-hover {
+	display: block;
 }
 
 /* ----------------------------------------------------
@@ -120,6 +129,7 @@ div#box_websiteIP_addinfo #websiteip-addinfo-control img {
 	cursor: pointer;
 	width: 20px;
 	height: 20px;
+	position: initial;
 }
 div#box_websiteIP_addinfo #websiteip-addinfo-control img:hover {
 	background-color: #ff9a9a;
