@@ -3,6 +3,7 @@
 // 	loadIPaddressOnlyEnabled();
 // });
 
+var websiteIPboxEnabled = true;
 loadIPaddressOnlyEnabled();
 
 function loadIPaddressOnlyEnabled() {
@@ -10,6 +11,7 @@ function loadIPaddressOnlyEnabled() {
 
 	browser.runtime.sendMessage({name: 'isEnabledForTab'}, function(response) {
 		if(!response.status) {
+			websiteIPboxEnabled = false;
 			// console.log('disabled websiteIP');
 			return;
 		}
@@ -26,6 +28,7 @@ function closeBox() {
 }
 
 function checkBox() {
+	if (!websiteIPboxEnabled) return true;
 	var websiteip = document.getElementById('box_websiteIP');
 	if (websiteip != null) return true;
 	loadIPaddress();
@@ -213,6 +216,7 @@ function closeForTab() {
 		// console.log(response);
 		if (response.tab_status == 'false') {
 			closeBox();
+			websiteIPboxEnabled = false;
 		}
 	});
 }
