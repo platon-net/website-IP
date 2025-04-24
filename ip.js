@@ -36,6 +36,14 @@ function checkBox() {
 
 var loadIPaddress_try_again = 3;
 function loadIPaddress() {
+	const hostname = window.location.hostname;
+	const parts = hostname.split('.');
+	let secondLevelDomain;
+	if (parts.length >= 2) {
+		secondLevelDomain = parts.slice(-2).join('.');
+	}
+	// console.log('domain = '+secondLevelDomain);
+
 	browser.runtime.sendMessage({name: 'getIP'}, function(response) {
 		// summary:
 		//		grab the ip
@@ -98,6 +106,14 @@ function loadIPaddress() {
 			addinfo.innerHTML = '<img src="'+browser.runtime.getURL('images/icon-info2.svg')+'" title="Additional info" width="20" height="20">';
 			addinfo.addEventListener('click', websiteipAdditionalInfo);
 			websiteip.appendChild(addinfo);
+		}
+
+		if (secondLevelDomain.substring(secondLevelDomain.length - 3) == '.sk') {
+			var backorderButton = document.createElement('span');
+			backorderButton.classList.add('websiteip-icon');
+			backorderButton.classList.add('on-hover');
+			backorderButton.innerHTML = '<a href="https://www.backorder.sk/domena/'+secondLevelDomain+'" target="_blank"><img src="'+browser.runtime.getURL('images/icon-backorder.png')+'" title="Open in Backorder.sk" width="20" height="20"></a>';
+			websiteip.appendChild(backorderButton);
 		}
 
 		var closeButton = document.createElement('span');
