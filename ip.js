@@ -108,7 +108,10 @@ function loadIPaddress() {
 			websiteip.appendChild(addinfo);
 		}
 
-		if (secondLevelDomain.substring(secondLevelDomain.length - 3) == '.sk') {
+		if (secondLevelDomain
+			&& secondLevelDomain.length > 3
+			&& secondLevelDomain.substring(secondLevelDomain.length - 3) == '.sk')
+		{
 			var backorderButton = document.createElement('span');
 			backorderButton.classList.add('websiteip-icon');
 			backorderButton.classList.add('on-hover');
