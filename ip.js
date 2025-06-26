@@ -54,6 +54,10 @@ function loadIPaddress() {
 			response_ip = response.ip;
 		}
 
+		if (response_ip == '127.0.0.1') {
+			console.log('IP is localhost, skip');
+			return;
+		}
 
 		var websiteip = document.getElementById('box_websiteIP');
 		if (websiteip == null) {
