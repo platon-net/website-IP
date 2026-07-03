@@ -1,4 +1,5 @@
 import { Reader } from './node_modules/libmaxmind/index.mjs';
+import API from './lib/openapi-js-simple/src/API.js';
 
 // Extract domain name (DN) from URL
 function url2dn(url) {
@@ -103,18 +104,58 @@ function geoIPmaxmind(ip_address, callback) {
 }
 
 function isWebserviceEnabled() {
+	return webserviceEndpoint().length > 0;
+}
+
+function webserviceEndpoint() {
 	var url = localStorage.getItem('webservice_endpoint_url');
-	if (url == null || url == undefined) return false;
-	return url.trim().length > 0;
+	if (url == null || url == undefined) return '';
+	return url.trim();
+}
+
+function isAPIenabled() {
+	return apiEndpoint().length > 0;
+}
+
+function apiEndpoint() {
+	var url = localStorage.getItem('api_endpoint_url');
+	if (url == null || url == undefined) return '';
+	return url.trim();
+}
+
+function apiToken() {
+	var token = localStorage.getItem('api_token');
+	if (token == null || token == undefined) return null;
+	token = token.trim();
+	return token.length > 0 ? token : null;
+}
+
+function apiClient() {
+	return new API(apiEndpoint(), apiToken());
+}
+
+function remoteService() {
+	var service = localStorage.getItem('remote_service');
+	if (service == null || service == undefined) {
+		return isWebserviceEnabled() ? 'webservice' : 'none';
+	}
+	service = service.toLowerCase();
+	return ['none', 'webservice', 'openapi'].includes(service) ? service : 'none';
+}
+
+function isRemoteServiceEnabled() {
+	var service = remoteService();
+	return (service == 'webservice' && isWebserviceEnabled())
+		|| (service == 'openapi' && isAPIenabled());
 }
 
 function webservice(service, params, callback) {
-	var webservice_endpoint_url = localStorage.getItem('webservice_endpoint_url')+'?ws='+service;
+	var webservice_endpoint_url = webserviceEndpoint()+'?ws='+service;
 	var form_data  = new FormData();
 	Object.keys(params).forEach(key => {
 		form_data.append(key, params[key]);
 	});
-	fetch(webservice_endpoint_url, {
+	return fetch(webservice_endpoint_url, {
 		method: 'POST',
 		// headers: { 'Content-Type': 'application/json' },
 		// body: JSON.stringify(params)
@@ -122,13 +163,13 @@ function webservice(service, params, callback) {
 	})
 	.then(response => response.json())
 	.then(json => {
-		if (callback != null) callback(json);
-	})
-	.catch(error => console.error('Error loading MMDB:', error));
+		if (callback != null) return callback(json);
+		return json;
+	});
 }
 
 function geoIPwebservice(ip_address, callback) {
-	webservice('geoip', {ip_address: ip_address}, function(response){
+	return webservice('geoip', {ip_address: ip_address}, function(response){
 		var result = {};
 		if (response.status == 'OK') {
 			result = {
@@ -140,11 +181,18 @@ function geoIPwebservice(ip_address, callback) {
 			result = {'iso_code': 'N/A', 'name': 'N/A'};
 		}
 		if (callback != null) callback(result);
+		return result;
+	})
+	.catch(error => {
+		console.error(error);
+		var result = {'iso_code': 'N/A', 'name': 'N/A'};
+		if (callback != null) callback(result);
+		return result;
 	});
 }
 
 function addInfoWebservice(domain, callback) {
-	webservice('domain_additional_info', {domain: domain}, function(response){
+	return webservice('domain_additional_info', {domain: domain}, function(response){
 		var result = {};
 		if (response.status == 'OK') {
 			result = {
@@ -155,6 +203,62 @@ function addInfoWebservice(domain, callback) {
 			result = {'html': response.msg};
 		}
 		if (callback != null) callback(result);
+		return result;
+	})
+	.catch(error => {
+		console.error(error);
+		var result = {'html': browser.i18n.getMessage('remoteServiceError')};
+		if (callback != null) callback(result);
+		return result;
+	});
+}
+
+function geoIPapi(ip_address, callback) {
+	return Promise.resolve()
+	.then(() => apiClient().get('/ip/'+encodeURIComponent(ip_address)+'/geo'))
+	.then(response => {
+		var result = {};
+		if (response.status == 'OK' && response.data != null) {
+			result = {
+				'iso_code': response.data.iso_code,
+				'name': response.data.name
+			};
+		} else {
+			console.error(response.msg);
+			result = {'iso_code': 'N/A', 'name': 'N/A'};
+		}
+		if (callback != null) callback(result);
+		return result;
+	})
+	.catch(error => {
+		console.error(error);
+		var result = {'iso_code': 'N/A', 'name': 'N/A'};
+		if (callback != null) callback(result);
+		return result;
+	});
+}
+
+function addInfoAPI(domain, callback) {
+	return Promise.resolve()
+	.then(() => apiClient().get('/domains/'+encodeURIComponent(domain)+'/additional-info'))
+	.then(response => {
+		var result = {};
+		if (response.status == 'OK' && response.data != null) {
+			result = {
+				'html': response.data.html
+			};
+		} else {
+			console.error(response.msg);
+			result = {'html': response.msg};
+		}
+		if (callback != null) callback(result);
+		return result;
+	})
+	.catch(error => {
+		console.error(error);
+		var result = {'html': browser.i18n.getMessage('remoteServiceError')};
+		if (callback != null) callback(result);
+		return result;
 	});
 }
 
@@ -196,7 +300,7 @@ browser.runtime.onMessage.addListener(
 		case 'getIP':
 			sendResponse({
 				ip: getIPfromURL(sender.tab.url),
-				is_webservice_enabled: isWebserviceEnabled()
+				is_webservice_enabled: isRemoteServiceEnabled()
 			});
 			break;
 		case 'getIPbyURL':
@@ -231,9 +335,13 @@ browser.runtime.onMessage.addListener(
 			});
 			break;
 		case 'geoIP':
-			if (isWebserviceEnabled()) {
+			if (remoteService() == 'webservice' && isWebserviceEnabled()) {
 				geoIPwebservice(request.ip_address, function(result){
 					sendResponse({ip_address: request.ip_address, source: 'webservice', data: result});
+				});
+			} else if (remoteService() == 'openapi' && isAPIenabled()) {
+				geoIPapi(request.ip_address, function(result){
+					sendResponse({ip_address: request.ip_address, source: 'openapi', data: result});
 				});
 			} else {
 				geoIPmaxmind(request.ip_address, function(result){
@@ -241,13 +349,18 @@ browser.runtime.onMessage.addListener(
 				});
 			}
 			break;
+		case 'addInfo':
 		case 'addinfo':
-			if (isWebserviceEnabled()) {
+			if (remoteService() == 'webservice' && isWebserviceEnabled()) {
 				addInfoWebservice(request.domain, function(result){
 					sendResponse({domain: request.domain, source: 'webservice', data: result});
 				});
+			} else if (remoteService() == 'openapi' && isAPIenabled()) {
+				addInfoAPI(request.domain, function(result){
+					sendResponse({domain: request.domain, source: 'openapi', data: result});
+				});
 			} else {
-				sendResponse({domain: request.domain, source: 'local', data: {html: 'Not implemented localy, required webservice'}});
+				sendResponse({domain: request.domain, source: 'local', data: {html: browser.i18n.getMessage('remoteServiceDisabled')}});
 			}
 			break;
 		default:

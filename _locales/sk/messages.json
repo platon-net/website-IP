@@ -29,6 +29,39 @@
 	"webserviceEndpointURL": {
 		"message": "URL webovej služby"
 	},
+	"general": {
+		"message": "Všeobecné"
+	},
+	"remoteService": {
+		"message": "Vzdialená služba"
+	},
+	"remoteServiceNone": {
+		"message": "Žiadna"
+	},
+	"remoteServiceWebService": {
+		"message": "WebService"
+	},
+	"remoteServiceOpenAPI": {
+		"message": "OpenAPI"
+	},
+	"webservice": {
+		"message": "WebService"
+	},
+	"openAPI": {
+		"message": "OpenAPI"
+	},
+	"apiEndpointURL": {
+		"message": "URL API rozhrania"
+	},
+	"apiToken": {
+		"message": "API token"
+	},
+	"remoteServiceError": {
+		"message": "Požiadavka na vzdialenú službu zlyhala."
+	},
+	"remoteServiceDisabled": {
+		"message": "Dodatočné informácie vyžadujú nakonfigurovanú vzdialenú službu."
+	},
 	"save": {
 		"message": "Uložiť"
 	},
@@ -39,4 +72,3 @@
 		"message": "Zatvor"
 	}
 }
-

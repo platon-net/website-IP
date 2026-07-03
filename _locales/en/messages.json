@@ -29,6 +29,39 @@
 	"webserviceEndpointURL": {
 		"message": "Webservice endpoint URL"
 	},
+	"general": {
+		"message": "General"
+	},
+	"remoteService": {
+		"message": "Remote service"
+	},
+	"remoteServiceNone": {
+		"message": "None"
+	},
+	"remoteServiceWebService": {
+		"message": "WebService"
+	},
+	"remoteServiceOpenAPI": {
+		"message": "OpenAPI"
+	},
+	"webservice": {
+		"message": "WebService"
+	},
+	"openAPI": {
+		"message": "OpenAPI"
+	},
+	"apiEndpointURL": {
+		"message": "API Endpoint URL"
+	},
+	"apiToken": {
+		"message": "API Token"
+	},
+	"remoteServiceError": {
+		"message": "The remote service request failed."
+	},
+	"remoteServiceDisabled": {
+		"message": "Additional information requires a configured remote service."
+	},
 	"save": {
 		"message": "Uložiť"
 	},
@@ -39,4 +72,3 @@
 		"message": "Close"
 	}
 }
-

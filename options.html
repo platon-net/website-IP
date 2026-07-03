@@ -3,9 +3,30 @@
 	<link rel="stylesheet" href="/css/options.css" type="text/css" charset="utf-8" />
 </head>
 <body>
-	__MSG_webserviceEndpointURL__ <br>
-	<input type="text" id="webservice_endpoint_url">
-	<br><br>
+	<fieldset>
+		<legend>__MSG_general__</legend>
+		<label for="remote_service">__MSG_remoteService__</label><br>
+		<select id="remote_service">
+			<option value="none">__MSG_remoteServiceNone__</option>
+			<option value="webservice">__MSG_remoteServiceWebService__</option>
+			<option value="openapi">__MSG_remoteServiceOpenAPI__</option>
+		</select>
+	</fieldset>
+
+	<fieldset>
+		<legend>__MSG_webservice__</legend>
+		<label for="webservice_endpoint_url">__MSG_webserviceEndpointURL__</label><br>
+		<input type="url" id="webservice_endpoint_url">
+	</fieldset>
+
+	<fieldset>
+		<legend>__MSG_openAPI__</legend>
+		<label for="api_endpoint_url">__MSG_apiEndpointURL__</label><br>
+		<input type="url" id="api_endpoint_url"><br><br>
+		<label for="api_token">__MSG_apiToken__</label><br>
+		<input type="text" id="api_token">
+	</fieldset>
+
 	<span id="websiteip_label_save" class="hide">__MSG_saveLabel__</span>
 	<button id="websiteip_button_save" class="right">__MSG_save__</button>
 
