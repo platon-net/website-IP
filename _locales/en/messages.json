@@ -62,6 +62,12 @@
 	"remoteServiceDisabled": {
 		"message": "Additional information requires a configured remote service."
 	},
+	"ignoreIP": {
+		"message": "Ignore IP"
+	},
+	"allowIP": {
+		"message": "Allow IP"
+	},
 	"save": {
 		"message": "Uložiť"
 	},

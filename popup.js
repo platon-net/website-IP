@@ -21,6 +21,20 @@ function updateButtonStatus() {
 	});
 }
 
+var current_ip_address = null;
+
+function updateIgnoreIPButton(ip_address, is_ignored) {
+	var button = document.querySelector('#ignoreIPButton');
+	current_ip_address = ip_address;
+	if (ip_address == null || ip_address == 'N/A') {
+		button.classList.add('hide');
+		return;
+	}
+	button.value = is_ignored ? 'true' : 'false';
+	button.innerHTML = browser.i18n.getMessage(is_ignored ? 'allowIP' : 'ignoreIP');
+	button.classList.remove('hide');
+}
+
 document.querySelector('#enableDisableIPButton').addEventListener('click', function() {
 	// summary:
 	//		Attach the click event
@@ -31,6 +45,22 @@ document.querySelector('#enableDisableIPButton').addEventListener('click', funct
 		browser.runtime.sendMessage({name: 'setEnabled', status: true}, updateButtonStatus);
 	}
 	document.getElementById('label-message-info').classList.remove('hide');
+});
+
+document.querySelector('#ignoreIPButton').addEventListener('click', function() {
+	if (current_ip_address == null || current_ip_address == 'N/A') return;
+	var button = document.querySelector('#ignoreIPButton');
+	var ignore_ip = button.value !== 'true';
+	browser.runtime.sendMessage({name: 'setIPIgnored', ip_address: current_ip_address, ignored: ignore_ip}, function(response) {
+		updateIgnoreIPButton(response.ip_address, response.ignored);
+		browser.tabs.query({active: true, currentWindow: true}).then((tabs) => {
+			return browser.tabs.sendMessage(tabs[0].id, {
+				name: 'ignoredIPChanged',
+				ip_address: response.ip_address,
+				ignored: response.ignored
+			});
+		}).catch(error => console.error(error));
+	});
 });
 
 document.querySelector('#copyToClipboard').addEventListener('click', function() {
@@ -81,6 +111,7 @@ function updateIPaddress() {
 				response_ip = response.ip;
 			}
 			document.getElementById('ip-address').innerHTML = response_ip;
+			updateIgnoreIPButton(response_ip, response.is_ip_ignored === true);
 			if (response_ip != 'N/A') {
 				updateIPflag(response_ip);
 			}

@@ -149,6 +149,54 @@ function isRemoteServiceEnabled() {
 		|| (service == 'openapi' && isAPIenabled());
 }
 
+const IGNORED_IPS_STORAGE_KEY = 'ignored_ips';
+
+function normalizeIgnoredValue(value) {
+	return typeof value == 'string' ? value.trim().toLowerCase() : '';
+}
+
+function loadIgnoredValues(storage_key) {
+	var stored_values = localStorage.getItem(storage_key);
+	if (stored_values == null) return [];
+	try {
+		var values = JSON.parse(stored_values);
+		if (!Array.isArray(values)) return [];
+		return [...new Set(values.map(normalizeIgnoredValue).filter(value => value.length > 0))];
+	} catch (error) {
+		console.error(error);
+		return [];
+	}
+}
+
+function saveIgnoredValues(storage_key, values) {
+	var normalized_values = [...new Set(values.map(normalizeIgnoredValue).filter(value => value.length > 0))];
+	localStorage.setItem(storage_key, JSON.stringify(normalized_values));
+	return normalized_values;
+}
+
+function loadIgnoredIPs() {
+	return loadIgnoredValues(IGNORED_IPS_STORAGE_KEY);
+}
+
+function saveIgnoredIPs(ip_addresses) {
+	return saveIgnoredValues(IGNORED_IPS_STORAGE_KEY, ip_addresses);
+}
+
+function addIgnoredIP(ip_address) {
+	var ip_addresses = loadIgnoredIPs();
+	ip_addresses.push(ip_address);
+	return saveIgnoredIPs(ip_addresses);
+}
+
+function removeIgnoredIP(ip_address) {
+	var normalized_ip_address = normalizeIgnoredValue(ip_address);
+	return saveIgnoredIPs(loadIgnoredIPs().filter(value => value != normalized_ip_address));
+}
+
+function isIgnoredIP(ip_address) {
+	return loadIgnoredIPs().includes(normalizeIgnoredValue(ip_address));
+}
+
 function webservice(service, params, callback) {
 	var webservice_endpoint_url = webserviceEndpoint()+'?ws='+service;
 	var form_data  = new FormData();
@@ -298,15 +346,30 @@ browser.runtime.onMessage.addListener(
 			});
 			break;
 		case 'getIP':
+			var current_ip_address = getIPfromURL(sender.tab.url);
 			sendResponse({
-				ip: getIPfromURL(sender.tab.url),
+				ip: current_ip_address,
+				is_ip_ignored: isIgnoredIP(current_ip_address),
 				is_webservice_enabled: isRemoteServiceEnabled()
 			});
 			break;
 		case 'getIPbyURL':
+			var requested_ip_address = getIPfromURL(request.url);
 			sendResponse({
-				ip: getIPfromURL(request.url)
+				ip: requested_ip_address,
+				is_ip_ignored: isIgnoredIP(requested_ip_address)
 			});
+			break;
+		case 'isIPIgnored':
+			sendResponse({ip_address: request.ip_address, ignored: isIgnoredIP(request.ip_address)});
+			break;
+		case 'setIPIgnored':
+			if (request.ignored) {
+				addIgnoredIP(request.ip_address);
+			} else {
+				removeIgnoredIP(request.ip_address);
+			}
+			sendResponse({ip_address: request.ip_address, ignored: isIgnoredIP(request.ip_address)});
 			break;
 		case 'copyIP':
 			/* deprecated by Firefox 2024-09-02 12:35:36 Igor

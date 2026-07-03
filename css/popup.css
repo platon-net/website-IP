@@ -32,6 +32,10 @@ input {
 	float: right;
 }
 
+#ignoreIPButton {
+	margin-right: 5px;
+}
+
 .ip-country-flag {
 	height: 20px;
 	position: relative;

@@ -54,6 +54,11 @@ function loadIPaddress() {
 			response_ip = response.ip;
 		}
 
+		if (response.is_ip_ignored) {
+			closeBox();
+			return;
+		}
+
 		if (response_ip == '127.0.0.1') {
 			console.log('IP is localhost, skip');
 			return;
@@ -132,6 +137,15 @@ function loadIPaddress() {
 
 	});
 }
+
+browser.runtime.onMessage.addListener(function(request) {
+	if (request.name != 'ignoredIPChanged') return;
+	if (request.ignored) {
+		closeBox();
+	} else if (websiteIPboxEnabled) {
+		loadIPaddress();
+	}
+});
 
 function dragElement(elmnt, savepostion) {
 	var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;

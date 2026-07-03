@@ -62,6 +62,12 @@
 	"remoteServiceDisabled": {
 		"message": "Dodatočné informácie vyžadujú nakonfigurovanú vzdialenú službu."
 	},
+	"ignoreIP": {
+		"message": "Ignorovať IP"
+	},
+	"allowIP": {
+		"message": "Povoliť IP"
+	},
 	"save": {
 		"message": "Uložiť"
 	},
