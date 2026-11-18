@@ -4,6 +4,7 @@
 // });
 
 var websiteIPboxEnabled = true;
+const websiteIPShorteners = new WeakMap();
 loadIPaddressOnlyEnabled();
 
 function loadIPaddressOnlyEnabled() {
@@ -98,6 +99,7 @@ function loadIPaddress() {
 			}
 		} else {
 			geoIP(response_ip, function(response){
+				if (!/^[A-Z]{2}$/.test(response?.data?.iso_code)) return;
 				var flag = document.createElement('img');
 				flag.height = 20;
 				flag.alt = response.data.name;
@@ -128,6 +130,17 @@ function loadIPaddress() {
 			websiteip.appendChild(backorderButton);
 		}
 
+		if (response.is_shortener_enabled) {
+			let shortener = websiteIPShorteners.get(websiteip);
+			if (!shortener) {
+				shortener = createWebsiteIPShortener();
+				websiteIPShorteners.set(websiteip, shortener);
+			}
+			websiteip.appendChild(shortener);
+		} else {
+			websiteIPShorteners.delete(websiteip);
+		}
+
 		var closeButton = document.createElement('span');
 		closeButton.classList.add('websiteip-icon');
 		closeButton.classList.add('on-hover');
@@ -136,6 +149,92 @@ function loadIPaddress() {
 		websiteip.appendChild(closeButton);
 
 	});
+}
+
+function createWebsiteIPShortener() {
+	const container = document.createElement('span');
+	container.classList.add('websiteip-shortener', 'on-hover');
+	container.addEventListener('mousedown', event => event.stopPropagation());
+
+	const shortenButton = document.createElement('button');
+	shortenButton.type = 'button';
+	shortenButton.classList.add('websiteip-icon');
+	shortenButton.title = browser.i18n.getMessage('shortenUrl');
+	const icon = document.createElement('img');
+	icon.src = browser.runtime.getURL('images/icon-shortener.svg');
+	icon.alt = shortenButton.title;
+	shortenButton.appendChild(icon);
+
+	const result = document.createElement('span');
+	result.classList.add('websiteip-shortener-result');
+	result.hidden = true;
+	const input = document.createElement('input');
+	input.type = 'text';
+	input.readOnly = true;
+	input.setAttribute('aria-label', browser.i18n.getMessage('shortenedUrl'));
+	const copyButton = document.createElement('button');
+	copyButton.type = 'button';
+	copyButton.textContent = browser.i18n.getMessage('copyShortUrl');
+	result.append(input, copyButton);
+
+	const status = document.createElement('span');
+	status.classList.add('websiteip-shortener-status');
+	status.setAttribute('role', 'status');
+	container.append(shortenButton, result, status);
+
+	let shortUrl;
+	let copyTimeout;
+	let pending = false;
+	function showStatus(message) {
+		status.textContent = message;
+		status.title = message;
+	}
+
+	shortenButton.addEventListener('click', async function(event) {
+		if (!event.isTrusted || pending) return;
+		pending = true;
+		shortenButton.disabled = true;
+		shortUrl = '';
+		clearTimeout(copyTimeout);
+		result.hidden = true;
+		input.value = '';
+		showStatus(browser.i18n.getMessage('shortenerLoading'));
+		try {
+			const response = await browser.runtime.sendMessage({name: 'shortenUrl', url: window.location.href});
+			if (response?.success) {
+				shortUrl = response.shorturl;
+				input.value = shortUrl;
+				result.hidden = false;
+				showStatus('');
+			} else {
+				showStatus(response?.error || browser.i18n.getMessage('shortenerUnavailable'));
+			}
+		} catch {
+			showStatus(browser.i18n.getMessage('shortenerUnavailable'));
+		} finally {
+			pending = false;
+			shortenButton.disabled = false;
+			if (container.isConnected) refreshLastPosition();
+		}
+	});
+
+	copyButton.addEventListener('click', function(event) {
+		if (!event.isTrusted || !shortUrl) return;
+		clearTimeout(copyTimeout);
+		let copied;
+		try {
+			input.value = shortUrl;
+			input.select();
+			copied = document.execCommand('copy');
+		} catch {
+			copied = false;
+		}
+		showStatus(browser.i18n.getMessage(copied ? 'shortenerCopied' : 'shortenerCopyError'));
+		copyTimeout = setTimeout(() => showStatus(''), 3000);
+		if (container.isConnected) refreshLastPosition();
+	});
+
+	return container;
 }
 
 browser.runtime.onMessage.addListener(function(request) {

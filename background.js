@@ -1,5 +1,6 @@
 import { Reader } from './node_modules/libmaxmind/index.mjs';
 import API from './lib/openapi-js-simple/src/API.js';
+import { getShortenerEndpoint, getShortenerPermission, parseHttpUrl } from './url-shortener.mjs';
 
 // Extract domain name (DN) from URL
 function url2dn(url) {
@@ -88,19 +89,21 @@ function getIPfromURL(url) {
 	return null;
 }
 
-function geoIPmaxmind(ip_address, callback) {
-	// console.log('geoIPmaxmind = '+ip_address);
-	fetch(browser.runtime.getURL('MaxMind/GeoLite2-Country.mmdb'))
-		.then(response => response.arrayBuffer())
-		.then(arrayBuffer => {
-			var reader = new Reader(arrayBuffer);
-			var result = reader.get(ip_address);
-			if (callback != null) callback({
-				'iso_code': result.country.iso_code,
-				'name': result.country.names.en
-			});
-		})
-		.catch(error => console.error('Error loading MMDB:', error));
+const UNKNOWN_COUNTRY = {iso_code: 'N/A', name: 'N/A'};
+
+async function geoIPmaxmind(ip_address) {
+	try {
+		const response = await fetch(browser.runtime.getURL('MaxMind/GeoLite2-Country.mmdb'));
+		if (!response.ok) throw new Error('HTTP ' + response.status);
+		const reader = new Reader(await response.arrayBuffer());
+		const country = reader.get(ip_address)?.country;
+		if (country?.iso_code && country.names?.en) {
+			return {iso_code: country.iso_code, name: country.names.en};
+		}
+	} catch (error) {
+		console.error('Error loading MMDB:', error);
+	}
+	return UNKNOWN_COUNTRY;
 }
 
 function isWebserviceEnabled() {
@@ -266,14 +269,20 @@ function geoIPapi(ip_address, callback) {
 	.then(() => apiClient().get('/ip/'+encodeURIComponent(ip_address)+'/geo'))
 	.then(response => {
 		var result = {};
-		if (response.status == 'OK' && response.data != null) {
+		if (response?.msg === 'Country is not detected') {
+			return geoIPmaxmind(ip_address).then(country => {
+				if (callback != null) callback(country, 'local');
+				return country;
+			});
+		}
+		if (response?.status == 'OK' && response.data != null) {
 			result = {
 				'iso_code': response.data.iso_code,
 				'name': response.data.name
 			};
 		} else {
-			console.error(response.msg);
-			result = {'iso_code': 'N/A', 'name': 'N/A'};
+			console.error(response?.msg || 'Invalid GeoIP response');
+			result = UNKNOWN_COUNTRY;
 		}
 		if (callback != null) callback(result);
 		return result;
@@ -310,11 +319,67 @@ function addInfoAPI(domain, callback) {
 	});
 }
 
+function shorteningError(message) {
+	return {success: false, error: browser.i18n.getMessage(message)};
+}
+
+async function shortenUrl(url) {
+	if (!parseHttpUrl(url)) return shorteningError('shortenerInvalidPage');
+
+	const apiUrl = getShortenerEndpoint();
+	if (!apiUrl) return shorteningError('shortenerDisabled');
+
+	const requestUrl = apiUrl + encodeURIComponent(url);
+	const permission = getShortenerPermission(apiUrl);
+	if (!permission) return shorteningError('shortenerInvalidEndpoint');
+
+	try {
+		if (!await browser.permissions.contains(permission)) {
+			return shorteningError('shortenerPermission');
+		}
+	} catch {
+		return shorteningError('shortenerPermission');
+	}
+
+	const controller = new AbortController();
+	const timeout = setTimeout(() => controller.abort(), 10000);
+	try {
+		const response = await fetch(requestUrl, {
+			method: 'GET',
+			signal: controller.signal,
+			credentials: 'omit',
+			redirect: 'error',
+			referrerPolicy: 'no-referrer',
+			cache: 'no-store'
+		});
+		if (!response.ok) return shorteningError('shortenerHttpError');
+
+		const result = await response.json();
+		if (result?.status !== 'OK' || !parseHttpUrl(result.shorturl)) {
+			return shorteningError('shortenerInvalidResponse');
+		}
+		return {success: true, shorturl: result.shorturl.trim()};
+	} catch (error) {
+		if (controller.signal.aborted) return shorteningError('shortenerTimeout');
+		if (error instanceof SyntaxError) return shorteningError('shortenerInvalidResponse');
+		return shorteningError('shortenerUnavailable');
+	} finally {
+		clearTimeout(timeout);
+	}
+}
+
 // Listeners
 browser.runtime.onMessage.addListener(
 	function(request, sender, sendResponse) {
 		//console.log(request);
 		switch(request.name) {
+		case 'shortenUrl':
+			const pageUrl = parseHttpUrl(sender.url);
+			if (!sender.tab || sender.frameId !== 0 || !pageUrl
+				|| pageUrl.origin !== parseHttpUrl(request.url)?.origin) {
+				return Promise.resolve(shorteningError('shortenerInvalidPage'));
+			}
+			return shortenUrl(request.url);
 		case 'setEnabled':
 			// request from the content script to set the options.
 			localStorage.setItem('websiteIPEnabled', request.status ? 'true' : 'false');
@@ -350,7 +415,8 @@ browser.runtime.onMessage.addListener(
 			sendResponse({
 				ip: current_ip_address,
 				is_ip_ignored: isIgnoredIP(current_ip_address),
-				is_webservice_enabled: isRemoteServiceEnabled()
+				is_webservice_enabled: isRemoteServiceEnabled(),
+				is_shortener_enabled: Boolean(getShortenerEndpoint())
 			});
 			break;
 		case 'getIPbyURL':
@@ -403,11 +469,11 @@ browser.runtime.onMessage.addListener(
 					sendResponse({ip_address: request.ip_address, source: 'webservice', data: result});
 				});
 			} else if (remoteService() == 'openapi' && isAPIenabled()) {
-				geoIPapi(request.ip_address, function(result){
-					sendResponse({ip_address: request.ip_address, source: 'openapi', data: result});
+				geoIPapi(request.ip_address, function(result, source = 'openapi'){
+					sendResponse({ip_address: request.ip_address, source: source, data: result});
 				});
 			} else {
-				geoIPmaxmind(request.ip_address, function(result){
+				geoIPmaxmind(request.ip_address).then(function(result){
 					sendResponse({ip_address: request.ip_address, source: 'maxmind', data: result});
 				});
 			}

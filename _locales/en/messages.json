@@ -76,5 +76,62 @@
 	},
 	"close": {
 		"message": "Close"
+	},
+	"shortenerTitle": {
+		"message": "URL shortener"
+	},
+	"shortenerEndpoint": {
+		"message": "Shortener URL"
+	},
+	"shortenerDescription": {
+		"message": "The active page URL is appended to this address. The shortener must return a JSON response. Leave the field empty to disable shortening."
+	},
+	"shortenerPrivacy": {
+		"message": "When you click the shorten button, the current page URL is sent to the configured shortener."
+	},
+	"shortenerExample": {
+		"message": "Example JSON response"
+	},
+	"shortenUrl": {
+		"message": "Shorten URL"
+	},
+	"shortenedUrl": {
+		"message": "Shortened URL"
+	},
+	"copyShortUrl": {
+		"message": "Copy"
+	},
+	"shortenerLoading": {
+		"message": "Shortening URL…"
+	},
+	"shortenerCopied": {
+		"message": "Copied"
+	},
+	"shortenerCopyError": {
+		"message": "Could not copy the URL."
+	},
+	"shortenerInvalidPage": {
+		"message": "Only HTTP and HTTPS pages can be shortened."
+	},
+	"shortenerDisabled": {
+		"message": "The URL shortener is disabled."
+	},
+	"shortenerInvalidEndpoint": {
+		"message": "Enter an HTTP or HTTPS endpoint that can accept the page URL at the end."
+	},
+	"shortenerPermission": {
+		"message": "Allow access to the shortener host when saving its URL in Settings."
+	},
+	"shortenerTimeout": {
+		"message": "The URL shortener took too long to respond."
+	},
+	"shortenerHttpError": {
+		"message": "The URL shortener returned an HTTP error."
+	},
+	"shortenerInvalidResponse": {
+		"message": "The URL shortener returned an invalid response."
+	},
+	"shortenerUnavailable": {
+		"message": "The URL shortener is unavailable."
 	}
 }

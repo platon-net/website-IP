@@ -70,6 +70,72 @@ div#box_websiteIP:hover .on-hover {
 	display: block;
 }
 
+div#box_websiteIP:hover .websiteip-shortener,
+div#box_websiteIP:focus-within .websiteip-shortener {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+}
+
+div#box_websiteIP .websiteip-shortener > .websiteip-icon {
+	display: inline-flex;
+	padding: 0;
+	border: 0;
+	background: transparent;
+}
+
+div#box_websiteIP .websiteip-shortener > .websiteip-icon:disabled {
+	cursor: wait;
+}
+
+div#box_websiteIP .websiteip-shortener-result:not([hidden]) {
+	display: inline-flex;
+	gap: 4px;
+}
+
+div#box_websiteIP .websiteip-shortener-result[hidden] {
+	display: none;
+}
+
+div#box_websiteIP .websiteip-shortener-result input {
+	width: clamp(65px, 30vw, 180px);
+	padding: 0 3px;
+}
+
+div#box_websiteIP .websiteip-shortener-result button {
+	appearance: none;
+	padding: 0 6px;
+	border: 1px solid #919191;
+	border-radius: 3px;
+	background: #fff;
+	color: #333;
+	font-size: 12px;
+	font-weight: 600;
+	line-height: 16px;
+	cursor: pointer;
+}
+
+div#box_websiteIP .websiteip-shortener-result button:hover {
+	background: #e5e5e5;
+}
+
+div#box_websiteIP .websiteip-shortener-result button:focus-visible {
+	outline: 2px solid #333;
+	outline-offset: 1px;
+}
+
+div#box_websiteIP .websiteip-shortener-status {
+	font-size: 12px;
+	line-height: 16px;
+}
+
+div#box_websiteIP .websiteip-shortener-status:not(:empty) {
+	max-width: min(40vw, 230px);
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
 /* ----------------------------------------------------
  * Additional Info box
  */

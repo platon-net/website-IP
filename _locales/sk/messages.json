@@ -76,5 +76,62 @@
 	},
 	"close": {
 		"message": "Zatvor"
+	},
+	"shortenerTitle": {
+		"message": "URL skracovač"
+	},
+	"shortenerEndpoint": {
+		"message": "URL adresa skracovača"
+	},
+	"shortenerDescription": {
+		"message": "K zadanej URL adrese sa pripojí URL aktuálne otvorenej stránky. Skracovač musí vrátiť odpoveď vo formáte JSON. Prázdna hodnota skrátenie vypne."
+	},
+	"shortenerPrivacy": {
+		"message": "Po kliknutí na skrátenie sa URL aktuálnej stránky odošle nakonfigurovanému skracovaču."
+	},
+	"shortenerExample": {
+		"message": "Príklad odpovede JSON"
+	},
+	"shortenUrl": {
+		"message": "Skrátiť URL"
+	},
+	"shortenedUrl": {
+		"message": "Skrátená URL"
+	},
+	"copyShortUrl": {
+		"message": "Kopírovať"
+	},
+	"shortenerLoading": {
+		"message": "Skracujem URL…"
+	},
+	"shortenerCopied": {
+		"message": "Skopírované"
+	},
+	"shortenerCopyError": {
+		"message": "URL sa nepodarilo skopírovať."
+	},
+	"shortenerInvalidPage": {
+		"message": "Skrátiť možno iba adresy stránok HTTP a HTTPS."
+	},
+	"shortenerDisabled": {
+		"message": "Skracovač URL je vypnutý."
+	},
+	"shortenerInvalidEndpoint": {
+		"message": "Zadajte adresu HTTP alebo HTTPS, na koniec ktorej možno pripojiť URL stránky."
+	},
+	"shortenerPermission": {
+		"message": "Pri ukladaní adresy skracovača v nastaveniach povoľte prístup k jeho hostiteľovi."
+	},
+	"shortenerTimeout": {
+		"message": "Skracovač URL neodpovedal v časovom limite."
+	},
+	"shortenerHttpError": {
+		"message": "Skracovač URL vrátil chybu HTTP."
+	},
+	"shortenerInvalidResponse": {
+		"message": "Skracovač URL vrátil neplatnú odpoveď."
+	},
+	"shortenerUnavailable": {
+		"message": "Skracovač URL nie je dostupný."
 	}
 }

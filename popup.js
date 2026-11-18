@@ -126,12 +126,14 @@ updateIPaddress();
 
 function updateIPflag(ip_address) {
 	browser.runtime.sendMessage({name: 'geoIP', ip_address: ip_address}, function(response) {
-		document.getElementById('ip-country').innerHTML = response.data.name;
+		const country = response?.data;
+		document.getElementById('ip-country').textContent = country?.name || 'N/A';
+		if (!/^[A-Z]{2}$/.test(country?.iso_code)) return;
 		var img_flag = document.createElement('img');
 		img_flag.classList.add('ip-country-flag');
-		img_flag.title = response.data.name;
-		img_flag.alt = response.data.name;
-		img_flag.src = browser.runtime.getURL('images/flags/'+response.data.iso_code+'.png');
+		img_flag.title = country.name;
+		img_flag.alt = country.name;
+		img_flag.src = browser.runtime.getURL('images/flags/'+country.iso_code+'.png');
 		document.getElementById('ip-country-flag').appendChild(img_flag);
 	});
 }

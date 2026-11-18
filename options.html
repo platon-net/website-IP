@@ -27,10 +27,32 @@
 		<input type="text" id="api_token">
 	</fieldset>
 
+	<fieldset>
+		<legend>__MSG_shortenerTitle__</legend>
+		<label for="url-shortener-endpoint">__MSG_shortenerEndpoint__</label><br>
+		<input type="url" id="url-shortener-endpoint" aria-describedby="url-shortener-description url-shortener-privacy">
+		<p id="url-shortener-description">__MSG_shortenerDescription__</p>
+		<p id="url-shortener-privacy">__MSG_shortenerPrivacy__</p>
+		<details>
+			<summary>__MSG_shortenerExample__</summary>
+			<pre>{
+  "status": "OK",
+  "short": "5UWKA",
+  "shorturl": "https://ix.sk/5UWKA",
+  "longurl": "https://www.platon.sk",
+  "stats": {
+    "clicked": "5",
+    "saved": "1"
+  }
+}</pre>
+		</details>
+	</fieldset>
+
+	<span id="url-shortener-settings-error" role="alert"></span>
 	<span id="websiteip_label_save" class="hide">__MSG_saveLabel__</span>
 	<button id="websiteip_button_save" class="right">__MSG_save__</button>
 
 </body>
-<script type="text/javascript" src="options.js"></script>
+<script type="module" src="options.js"></script>
 <script type="text/javascript" src="i18n.js"></script>
 </html>
